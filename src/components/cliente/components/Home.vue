@@ -21,8 +21,8 @@ export default {
     const authStore = useAuthStore();
     const items = [
       {title: 'Inicio', icon: 'mdi-home', to: '/home/inicio'},
-      {title: 'Paquetes', icon: 'mdi-package-variant-closed', to: '/home/paquetes'},
-      {title: 'Servicios', icon: 'mdi-food', to: '/home/servicios'},
+      /*{title: 'Paquetes', icon: 'mdi-package-variant-closed', to: '/home/paquetes'},*/
+      {title: 'Paquetes', icon: 'mdi-package-variant-closed', to: '/home/servicios'},
       {title: 'Carrito', icon: 'mdi-cart', to: '/home/carrito'},
     ];
 

@@ -57,10 +57,6 @@ const router = new VueRouter({
         component: () => import("../components/cliente/components/Home.vue"),
         redirect: "/home/inicio",
         children: [{
-            path: "/home/paquetes/",
-            name: "paquetes",
-            component: () => import("../components/cliente/components/Paquetes.vue"),
-        }, {
             path: "/home/servicios/",
             name: "serviciosCliente",
             component: () => import("../components/cliente/components/Servicios.vue"),
