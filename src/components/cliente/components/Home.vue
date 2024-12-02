@@ -13,33 +13,42 @@
 </template>
 
 <script>
-import { watch } from 'vue';
+import { ref, watch, onMounted } from "vue";
 import { useAuthStore } from "@/stores";
 
 export default {
   setup() {
     const authStore = useAuthStore();
-    const items = [
-      {title: 'Inicio', icon: 'mdi-home', to: '/home/inicio'},
-      /*{title: 'Paquetes', icon: 'mdi-package-variant-closed', to: '/home/paquetes'},*/
-      {title: 'Paquetes', icon: 'mdi-package-variant-closed', to: '/home/servicios'},
-      {title: 'Carrito', icon: 'mdi-cart', to: '/home/carrito'},
-    ];
+    const items = ref([]);
 
-    watch(() => authStore.user, (newUser) => {
-      if (newUser) {
-      items.splice(4, 2)
-      items.push({title: 'Perfil', icon: 'mdi-account', to: '/home/perfil'});
+    const updateMenuItems = () => {
+      items.value = [
+        { title: "Inicio", icon: "mdi-home", to: "/home/inicio" },
+        { title: "Productos", icon: "mdi-package-variant-closed", to: "/home/servicios" },
+        { title: "Carrito", icon: "mdi-cart", to: "/home/carrito" },
+      ];
+
+      if (authStore.user) {
+        items.value.push({ title: "Perfil", icon: "mdi-account", to: "/home/perfil" });
       } else {
-      items.splice(4, 1)
-      items.push({title: 'Iniciar sesión', icon: 'mdi-login', to: '/home/login'});
-      items.push({title: 'Registrarse', icon: 'mdi-account-plus', to: '/home/registro'});
+        items.value.push(
+          { title: "Iniciar sesión", icon: "mdi-login", to: "/home/login" },
+          { title: "Registrarse", icon: "mdi-account-plus", to: "/home/registro" }
+        );
       }
-    }, { immediate: true });
+    };
+
+    watch(
+      () => authStore.user,
+      () => updateMenuItems(),
+      { immediate: true }
+    );
+
+    onMounted(() => updateMenuItems());
 
     return { items };
-  }
-}
+  },
+};
 </script>
 
 <style scoped>
@@ -58,6 +67,4 @@ export default {
 .v-icon {
   color: white;
 }
-
-/* Estilos personalizados según sea necesario */
 </style>

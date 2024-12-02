@@ -1,4 +1,4 @@
-<template>
+
     <div>
       <h1>Asignar paquete a servicio</h1>
       <p>Vas a agregar un paquete al servicio: {{ $route.query.item.nombre }}</p>
@@ -27,7 +27,7 @@
         <div v-for="(item, index) in draggedItems" :key="index">
           <CardPaquete :paquete="item" />
         </div>
-        <v-icon color="red darken-2" @click="vaciarItems">mdi-delete</v-icon> <!-- Icono de bote de basura -->
+        <v-icon color="red darken-2" @click="vaciarItems">mdi-delete</v-icon>
       </div>
       <v-pagination
         v-model="currentPage"
@@ -162,4 +162,4 @@
     position: absolute;
   }
   </style>
-  
+   -->
