@@ -1,16 +1,16 @@
 <template>
   <div class="shopping-cart">
     <h1>Carrito de Compras</h1>
-    <div v-if="cart.length === 0" class="empty-cart">
+    <div v-if="cart.products.length === 0" class="empty-cart">
       <p>El carrito está vacío.</p>
     </div>
     <div v-else class="cart-items">
       <ul>
-        <li v-for="(item, index) in cart" :key="index" class="cart-item">
+        <li v-for="(item, index) in cart.products" :key="index" class="cart-item">
           <div class="item-info">
             <div class="product-name">
               <h3>{{ item.product.name }}</h3>
-              <p>Proveedor: {{ item.product.supplier }}</p>
+              <p>Proveedor: {{ item.product.provider }}</p>
             </div>
             <p>Cantidad: {{ item.quantity }}</p>
             <p>Precio: ${{ (item.product.price || 0).toFixed(2) }}</p>
@@ -21,124 +21,114 @@
               <img :src="item.product.qrCode" alt="QR Code" />
             </div>
             <div class="quantity-actions">
-              <button @click="incrementQuantity(item._id)" class="quantity-btn">+</button>
+              <button @click="incrementQuantity(item.product._id)" class="quantity-btn">+</button>
               <span class="quantity-display">{{ item.quantity }}</span>
-              <button @click="decrementQuantity(item._id)" class="quantity-btn">-</button>
+              <button @click="decrementQuantity(item.product._id)" class="quantity-btn">-</button>
             </div>
-            <button @click="removeProduct(item._id)" class="remove-btn">Eliminar</button>
+            <button @click="removeProduct(item.product._id)" class="remove-btn">Eliminar</button>
           </div>
         </li>
       </ul>
     </div>
     <div class="cart-total">
-      <p>Total: ${{ total.toFixed(2) }}</p>
+      <p>Total: ${{ cart.total.toFixed(2) }}</p>
     </div>
     <button @click="clearCart" class="clear-cart-btn">Vaciar carrito</button>
-
-    <!-- Snackbar para mostrar notificaciones -->
-    <v-snackbar v-model="snackbar.visible" :color="snackbar.color" timeout="3000">
-      {{ snackbar.message }}
-    </v-snackbar>
   </div>
 </template>
 
 <script>
-import { reactive, computed, onMounted } from "vue";
+import { reactive, onMounted } from "vue";
 
 export default {
   name: "ShoppingCart",
-
   setup() {
-    const cart = reactive([]);
-    const snackbar = reactive({
-      visible: false,
-      message: "",
-      color: "",
+    // Definir cart como un objeto reactivo con productos y total
+    const cart = reactive({
+      products: [],
+      total: 0, // Aseguramos que total esté inicialmente a 0
     });
 
+    // Función para calcular el total del carrito
+    const calculateTotal = () => {
+      cart.total = cart.products.reduce(
+        (sum, item) => sum + item.product.price * item.quantity,
+        0
+      );
+    };
+
+    // Cargar los productos del carrito desde la base de datos
     const loadCart = async () => {
       try {
-        const allDocs = await window.db.allDocs({ include_docs: true });
-        cart.splice(0, cart.length, ...allDocs.rows.map((row) => row.doc));
+        const result = await window.db.allDocs({ include_docs: true });
+        cart.products = result.rows.map((row) => ({
+          product: row.doc,
+          quantity: row.doc.quantity || 1, // Si no hay cantidad, se asigna 1 por defecto
+        }));
+        calculateTotal(); // Recalcular el total después de cargar los productos
       } catch (error) {
-        showNotification("error", "Error al cargar el carrito.");
+        console.error("Error al cargar el carrito:", error);
       }
     };
 
-    const incrementQuantity = async (id) => {
-      try {
-        const doc = await window.db.get(id);
-        doc.quantity += 1;
-        await window.db.put(doc);
-        await loadCart();
-        showNotification("success", "Cantidad incrementada.");
-      } catch (error) {
-        showNotification("error", "Error al incrementar cantidad.");
+    // Incrementar la cantidad de un producto
+    const incrementQuantity = async (uid) => {
+      const item = cart.products.find((item) => item.product._id === uid);
+      if (item) {
+        item.quantity += 1;
+        item.product.quantity = item.quantity; // Actualizar la cantidad en el producto
+        await window.db.put(item.product); // Guardar el cambio en la base de datos
+        calculateTotal(); // Recalcular el total
       }
     };
 
-    const decrementQuantity = async (id) => {
-      try {
-        const doc = await window.db.get(id);
-        if (doc.quantity > 1) {
-          doc.quantity -= 1;
-          await window.db.put(doc);
-          await loadCart();
-          showNotification("success", "Cantidad reducida.");
-        } else {
-          await removeProduct(id);
-        }
-      } catch (error) {
-        showNotification("error", "Error al decrementar cantidad.");
+    // Decrementar la cantidad de un producto
+    const decrementQuantity = async (uid) => {
+      const item = cart.products.find((item) => item.product._id === uid);
+      if (item && item.quantity > 1) {
+        item.quantity -= 1;
+        item.product.quantity = item.quantity; // Actualizar la cantidad en el producto
+        await window.db.put(item.product); // Guardar el cambio en la base de datos
+        calculateTotal(); // Recalcular el total
+      } else if (item) {
+        await removeProduct(uid); // Eliminar producto si la cantidad es 1
       }
     };
 
-    const removeProduct = async (id) => {
-      try {
-        const doc = await window.db.get(id);
-        await window.db.remove(doc);
-        await loadCart();
-        showNotification("success", "Producto eliminado.");
-      } catch (error) {
-        showNotification("error", "Error al eliminar producto.");
+    // Eliminar un producto del carrito
+    const removeProduct = async (uid) => {
+      const index = cart.products.findIndex((item) => item.product._id === uid);
+      if (index !== -1) {
+        await window.db.remove(cart.products[index].product); // Eliminar de la base de datos
+        cart.products.splice(index, 1); // Eliminar del arreglo
+        calculateTotal(); // Recalcular el total
       }
     };
 
+    // Vaciar el carrito
     const clearCart = async () => {
       try {
-        const allDocs = await window.db.allDocs({ include_docs: true });
-        for (const row of allDocs.rows) {
-          await window.db.remove(row.doc);
-        }
-        cart.splice(0, cart.length); // Vaciar el array local
-        showNotification("success", "Carrito vaciado.");
+        const allDocs = await window.db.allDocs();
+        const deleteOps = allDocs.rows.map((row) => window.db.remove(row.id, row.value.rev));
+        await Promise.all(deleteOps); // Eliminar todos los productos de la base de datos
+        cart.products = []; // Vaciar el carrito
+        calculateTotal(); // Recalcular el total
       } catch (error) {
-        showNotification("error", "Error al vaciar el carrito.");
+        console.error("Error al vaciar el carrito:", error);
       }
     };
 
-    const showNotification = (type, message) => {
-      snackbar.message = message;
-      snackbar.color = type === "success" ? "green" : "red";
-      snackbar.visible = true;
-    };
-
-    const total = computed(() =>
-      cart.reduce((acc, item) => acc + item.product.price * item.quantity, 0)
-    );
-
-    onMounted(async () => {
-      await loadCart();
+    // Cargar el carrito cuando el componente se monte
+    onMounted(() => {
+      loadCart();
     });
 
     return {
       cart,
-      total,
       incrementQuantity,
       decrementQuantity,
       removeProduct,
       clearCart,
-      snackbar,
     };
   },
 };
