@@ -10,17 +10,17 @@
     <!-- Main Content -->
     <div class="main-content">
       <div class="container mx-auto text-center mt-3">
-        <h2 class="text-3xl font-bold mb-4 text-white">Bienvenido a FOODSTER</h2>
-        <p class="text-lg mb-6 text-white">Descubre los mejores buffets cerca de ti.</p>
+        <h2 class="text-3xl font-bold mb-4 text-white">Bienvenido a Warehouse</h2>
+        <p class="text-lg mb-6 text-white">Tu tienda en línea con el mejor servicio de paquetería.</p>
         <v-divider class="mb-6"></v-divider>
-        <p class="text-lg text-white">Aquí encontrarás una amplia variedad de buffets para tus eventos especiales.</p>
+        <p class="text-lg text-white">Descubre una amplia variedad de productos y disfruta de nuestro servicio de entrega rápida y segura.</p>
       </div>
 
       <!-- CTA Section -->
       <div class="bg-gray-900 py-6">
-        <div class="container mx-auto text-center">
-          <h3 class="text-2xl font-semibold mb-4 text-white">¡Únete a Foodtser hoy mismo!</h3>
-          <p class="text-lg mb-6 text-white">Regístrate ahora para acceder a los mejores buffets y ofertas especiales.</p>
+        <div class="container mx-auto text-center">s
+          <h3 class="text-2xl font-semibold mb-4 text-white">¡Únete a Warehouse hoy mismo!</h3>
+          <p class="text-lg mb-6 text-white">Regístrate ahora para acceder a los mejores productos y ofertas especiales.</p>
           <v-btn href="/home/registro" class="mr-4">
             Registrarse
           </v-btn>
@@ -38,20 +38,17 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             <!-- Testimonial Card -->
             <div class="bg-white p-6 rounded-lg shadow-lg">
-              <p class="text-lg mb-4">"Foodster me ayudó a encontrar el buffet perfecto para mi fiesta de cumpleaños.
-                ¡Altamente recomendado!"</p>
+              <p class="text-lg mb-4">"Warehouse tiene una increíble variedad de productos y su servicio de entrega es rápido y confiable."</p>
               <p class="font-semibold">- María Sánchez</p>
             </div>
             <!-- Testimonial Card -->
             <div class="bg-white p-6 rounded-lg shadow-lg">
-              <p class="text-lg mb-4">"¡Increíble variedad de opciones! Encontré exactamente lo que necesitaba para mi
-                evento corporativo."</p>
+              <p class="text-lg mb-4">"¡Excelente servicio! Encontré todo lo que necesitaba y la entrega fue muy rápida."</p>
               <p class="font-semibold">- Juan Pérez</p>
             </div>
             <!-- Testimonial Card -->
             <div class="bg-white p-6 rounded-lg shadow-lg">
-              <p class="text-lg mb-4">"La experiencia de usuario en Foodster es excepcional. ¡No podría estar más feliz
-                con el servicio!"</p>
+              <p class="text-lg mb-4">"La experiencia de compra en Warehouse es excepcional. ¡Muy recomendado!"</p>
               <p class="font-semibold">- Ana Martínez</p>
             </div>
           </div>
@@ -64,7 +61,7 @@
         <p class="text-lg font-semibold">Información de contacto:</p>
         <p class="mt-2">Dirección: Av. Plan de Ayala 123, Cuernavaca, Morelos</p>
         <p>Teléfono: (123) 456-7890</p>
-        <p>Email: contacto@foodster.com</p>
+        <p>Email: contacto@warehouse.com</p>
       </div>
     </footer>
     </div>
@@ -72,11 +69,11 @@
 </template>
 
 <script>
-import banquete1 from '@/assets/images/eventos/banquete1.jpg';
-import banquete2 from '@/assets/images/eventos/banquete2.jpg';
-import banquete3 from '@/assets/images/eventos/banquete3.jpg';
-import banquete4 from '@/assets/images/eventos/banquete4.jpg';
-import banquete5 from '@/assets/images/eventos/banquete5.jpg';
+import banquete1 from '@/assets/images/paqueteria/landingimg1.jpg';
+import banquete2 from '@/assets/images/paqueteria/landingimg2.jpg';
+import banquete3 from '@/assets/images/paqueteria/landingimg3.jpg';
+import banquete4 from '@/assets/images/paqueteria/landingimg4.jpg';
+import banquete5 from '@/assets/images/paqueteria/landingimg5.jpg';
 
 export default {
   name: 'LandingPage',

@@ -4,7 +4,7 @@
       class="hidden lg:flex w-1/2 items-center justify-center bg-fdoscuro text-fdoscuro"
     >
       <div class="max-w-md text-center">
-               <img
+        <img
           class="fixed left-[7%] top-[15%] logo"
           src="../../assets/images/LogoWaterhouse2.png"
           alt="Logo"
@@ -69,28 +69,6 @@
             label="Nombre Completo"
             required
           ></v-text-field>
-          <!--<v-text-field
-            v-model="primerApellido"
-            :rules="pApellidoRules"
-            :counter="30"
-            label="Apellido Paterno"
-            required
-          ></v-text-field>
-          <v-text-field
-            v-model="segundoApellido"
-            :rules="sApellidoRules"
-            :counter="30"
-            label="Apellido Materno"
-            required
-          ></v-text-field>
-          <v-text-field
-            v-model="telefono"
-            :rules="telefonoRules"
-            :counter="10"
-            label="Numero de Teléfono"
-            required
-            type="number"
-          ></v-text-field>-->
           <v-text-field
             for="email"
             id="correo"
@@ -113,13 +91,9 @@
             counter
             @click:append="show1 = !show1"
           ></v-text-field>
-          <!--<div class="flex justify-center">
-            <Captcha @solucion="ponerSolucion"/>
-          </div>-->
           <div>
             <v-btn
               :loading="loading"
-              :disabled="solucion === ''"
               type="submit"
               color="secondary"
               class="w-full bg-fdoscuro text-white p-2 rounded-md hover:bg-gray-800 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300"
@@ -155,9 +129,6 @@ export default {
       valid: true,
       correo: "",
       nombreCompleto: "",
-      //primerApellido: "",
-      //segundoApellido: "",
-      //telefono: "",
       show1: false,
       contrasena: "",
       solucion: "",
@@ -176,21 +147,6 @@ export default {
         (v) =>
           v.length <= 30 || "El nombre debe de tener menos de 30 caracteres",
       ],
-      /*pApellidoRules: [
-        (v) => !!v || "Apellido Paterno requerido",
-        (v) =>
-          v.length <= 30 || "El Apellido debe de tener menos de 30 caracteres",
-      ],
-      sApellidoRules: [
-        (v) => !!v || "Apellido Materno requerido",
-        (v) =>
-          v.length <= 30 || "El apellido debe de tener menos de 30 caracteres",
-      ],
-      telefonoRules: [
-        (v) => !!v || "El telefono es requerido",
-        (v) => (v && v.length === 10) || "El telefono debe tener 10 caracteres",
-        (v) => !isNaN(v) || "Solo se permiten números",
-      ],*/
       passwordRules: [
         (v) => !!v || "la contraseña es requerida",
         (v) => (v && v.length >= 8) || "Minimo 8 caracteres",
@@ -209,13 +165,11 @@ export default {
       if (this.$refs.form.validate()) {
         this.loading = true;
         let usuario = {
-          nombreCompleto: this.nombreCompleto,
-          //primerApellido: this.primerApellido,
-          //segundoApellido: this.segundoApellido,
-          //telefono: this.telefono,
-          correo: this.correo,
-          contrasena: this.contrasena,
-          solucion: this.solucion,
+          uid: "string", // You might want to generate a unique ID here
+          name: this.nombreCompleto,
+          email: this.correo,
+          password: this.contrasena,
+          role: "CLIENT", // Updated role to CLIENT
         };
         const response = await UsersServices.insertPublic(usuario);
         if (response) {

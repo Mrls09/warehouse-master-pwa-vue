@@ -166,7 +166,7 @@ export default {
             editedItem: {
                 idPersonal: "",
                 usuarios: {
-                    idUsuario: "",
+                    uid: "",
                     nombres: "",
                     primerApellido: "",
                     segundoApellido: "",
@@ -248,7 +248,7 @@ export default {
             this.editedItem = {
                 idPersonal: "",
                 usuarios: {
-                    idUsuario: "",
+                    uid: "",
                     nombres: "",
                     primerApellido: "",
                     segundoApellido: "",
@@ -279,7 +279,7 @@ export default {
             this.editedItem = {
               idPersonal: "",
               usuarios: {
-                idUsuario: "",
+                uid: "",
                 nombres: "",
                 primerApellido: "",
                 segundoApellido: "",

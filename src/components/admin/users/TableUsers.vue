@@ -109,7 +109,7 @@
             }}
           </td>
           <td class="text-start">
-            <v-chip @click="changeStatus(item.idUsuario)" :color="item.active ? 'green' : 'red'" outlined small>
+            <v-chip @click="changeStatus(item.uid)" :color="item.active ? 'green' : 'red'" outlined small>
               {{ item.active ? 'Activo' : 'Inactivo' }}
             </v-chip>
           </td>
@@ -117,7 +117,7 @@
 
           <td class="text-center">
             <v-icon color="blue" @click="editItem(item)">mdi-pencil</v-icon>
-            <v-icon color="red" @click="deleteUser(item.idUsuario)">mdi-delete</v-icon>
+            <v-icon color="red" @click="deleteUser(item.uid)">mdi-delete</v-icon>
           </td>
         </tr>
       </template>
@@ -277,9 +277,9 @@ export default {
       }
     },
     //NOT FOUND, THIS METHOD NOT EXIST IN THE API
-    async changeStatus(idUsuario) {
+    async changeStatus(uid) {
       try {
-        await usersServices.changeStatus(idUsuario);
+        await usersServices.changeStatus(uid);
         await this.getUsers();
       } catch (error) {
         console.log(error)
@@ -374,9 +374,9 @@ export default {
         console.log(error);
       }
     },
-    async deleteUser(idUsuario) {
+    async deleteUser(uid) {
       try {
-        await usersServices.deleteUser(idUsuario);
+        await usersServices.deleteUser(uid);
         await this.getUsers();
       } catch (error) {
         console.log(error);

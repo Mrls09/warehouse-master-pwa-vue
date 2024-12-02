@@ -71,7 +71,7 @@ const getEventosByStatus = async (status) => {
         showNotification("error", "Error al obtener eventos por estado")
     }
 }
-const getEventosByIdUsuario = async (uid) => {
+const getEventosByuid = async (uid) => {
     try {
         const response = await axiosClient.get(`${baseUrl}/usuario/${uid}`);
         return response.data;
@@ -90,7 +90,7 @@ const getEventosByUsuario = async () => {
     }
 }
 
-const getEventosByPersonalIdUsuario = async () => {
+const getEventosByPersonaluid = async () => {
     try {
         const response = await axiosClient.get(`${baseUrl}/personal/`);
         return response.data;
@@ -111,8 +111,8 @@ const deleteEvento = async (uid) => {
 
 export {
     getEventos,
-    getEventosByIdUsuario,
-    getEventosByPersonalIdUsuario,
+    getEventosByuid,
+    getEventosByPersonaluid,
     updateEvento,
     setFinalizarEvento,
     setCancelarEvento,

@@ -1,7 +1,7 @@
 import {axiosClient} from "@/utils/axios-client";
 import {showNotification} from "@/utils/notification";
 
-let baseUrl = `/usuarios`;
+let baseUrl = `/users`;
 
 const getUsers = async () => {
     try {
@@ -31,15 +31,15 @@ const getUser = async (id) => {
 
 }
 
-const getMyUser = async () => {
+const getMyUser = async (uid) => {
     try {
-        const response = await axiosClient.get(`${baseUrl}/usuario/`);
+        const response = await axiosClient.get(`${baseUrl}/get-user-uid/${uid}`);
         return response.data;
     } catch (error) {
         showNotification("error", "Error al obtener usuario");
     }
-
 }
+
 
 const insert = async (personal) => {
     try {
@@ -53,13 +53,15 @@ const insert = async (personal) => {
 
 const insertPublic = async (personal) => {
     try {
-        const response = await axiosClient.post(`${baseUrl}/public/`, personal);
-        response.data ? showNotification("success", "Se ha registrado correctamente") : showNotification("error", "Error al crear usuario")
+        const response = await axiosClient.post(`${baseUrl}/create`, personal);
+        console.log("se envia hacia: ", `${baseUrl}/public/`, personal);
+        response.data ? showNotification("success", "Se ha registrado correctamente") : showNotification("error", "Error al crear usuario");
         return response.data;
     } catch (error) {
-        showNotification("error", "Error al crear usuario")
+        showNotification("error", "Error al crear usuario");
     }
 };
+
 const deleteUser = async (id_usuarios) => {
     try {
         const response = await axiosClient.delete(`${baseUrl}/${id_usuarios}`);

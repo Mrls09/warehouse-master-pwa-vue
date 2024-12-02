@@ -313,7 +313,7 @@ function next() {
 </script>
 
 <script>
-import {getEventosByPersonalIdUsuario, setFinalizarEvento} from "@/services/EventosServices";
+import {getEventosByPersonaluid, setFinalizarEvento} from "@/services/EventosServices";
 import {useAuthStore} from "@/stores";
 import moment from "moment/moment";
 import ServicioEventoService from "@/services/ServicioEventoService";
@@ -413,7 +413,7 @@ export default {
 
     async fetchEvents() {
       try {
-        let eventos = await getEventosByPersonalIdUsuario()
+        let eventos = await getEventosByPersonaluid()
         for (const evento of eventos) {
           evento.servicios = await ServicioEventoService.getServiciosEventoByEvento(evento.idEvento);
           evento.personal = await PersonalServices.getPersonalEvento(evento.idEvento);

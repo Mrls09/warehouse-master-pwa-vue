@@ -27,13 +27,13 @@ export default {
     ];
 
     watch(() => authStore.user, (newUser) => {
-      if (newUser && newUser.usuarios.roles[0].nombre === 'CLIENTE') {
-        items.splice(4, 2)
-        items.push({title: 'Perfil', icon: 'mdi-account', to: '/home/perfil'});
+      if (newUser) {
+      items.splice(4, 2)
+      items.push({title: 'Perfil', icon: 'mdi-account', to: '/home/perfil'});
       } else {
-        items.splice(4, 1)
-        items.push({title: 'Iniciar sesión', icon: 'mdi-login', to: '/home/login'});
-        items.push({title: 'Registrarse', icon: 'mdi-account-plus', to: '/home/registro'});
+      items.splice(4, 1)
+      items.push({title: 'Iniciar sesión', icon: 'mdi-login', to: '/home/login'});
+      items.push({title: 'Registrarse', icon: 'mdi-account-plus', to: '/home/registro'});
       }
     }, { immediate: true });
 

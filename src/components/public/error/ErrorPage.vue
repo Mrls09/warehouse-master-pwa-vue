@@ -4,12 +4,12 @@
     <div class="relative z-10 text-center">
       <h1 class="text-6xl font-bold text-white mb-4 drop-shadow-md sm:text-9xl">
         <span class="animate-bounce">4</span>
-        <span class="animate-spin">🍽️</span>
+        <span class="animate-spin">0</span>
         <span class="animate-bounce">4</span>
       </h1>
       <h2 class="text-3xl font-semibold text-white mb-4 drop-shadow-md sm:text-5xl">Recurso no encontrado</h2>
       <p class="text-lg text-white mb-8 drop-shadow-md sm:text-xl">
-        Lo sentimos, la página que buscas no se encuentra. ¿Te apetece un platito mientras?
+        Lo sentimos, la página que buscas no se encuentra.
       </p>
       <div class="relative">
         <v-progress-circular
