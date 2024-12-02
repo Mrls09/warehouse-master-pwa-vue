@@ -33,12 +33,17 @@
     <div class="cart-total">
       <p>Total: ${{ cart.total.toFixed(2) }}</p>
     </div>
-    <button @click="clearCart" class="clear-cart-btn">Vaciar carrito</button>
+    <div class= "quantity-actions">
+      <button @click="clearCart" class="clear-cart-btn">Vaciar carrito</button>
+      <br>
+      <button @click="comprarCart" class="comprar-cart-btn">Comprar</button>
+    </div>
   </div>
 </template>
 
 <script>
 import { reactive, onMounted } from "vue";
+import { createMovement } from "@/services/ServicesServices";
 
 export default {
   name: "ShoppingCart",
@@ -118,6 +123,33 @@ export default {
       }
     };
 
+    //Realizar la Compra de los Productos
+    const comprarCart = async () => {
+      if (cart.products.length === 0) {
+          alert("El carrito está vacío.");
+          return;
+      }
+
+      const payload = {
+          products: cart.products.map((item) => ({
+              product: { uid: item.product._id },
+              quantity: item.quantity,
+          })),
+          status: "EXIT",
+      };
+
+      try {
+          const result = await createMovement(payload);
+          if (result) {
+              alert("Compra realizada con éxito."); // O usa showNotification aquí
+              await clearCart(); // Vacía el carrito tras el éxito
+          }
+      } catch (error) {
+          alert("Error al realizar la compra. Por favor, intenta nuevamente.");
+          console.error("Error al comprar:", error);
+      }
+  };
+
     // Cargar el carrito cuando el componente se monte
     onMounted(() => {
       loadCart();
@@ -129,6 +161,7 @@ export default {
       decrementQuantity,
       removeProduct,
       clearCart,
+      comprarCart,
     };
   },
 };
@@ -248,5 +281,18 @@ export default {
 
 .clear-cart-btn:hover {
   background-color: darkred;
+}
+
+.comprar-cart-btn {
+  margin-top: 20px;
+  padding: 10px 70px;
+  background-color: green;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.comprar-cart-btn:hover {
+  background-color: darkgreen;
 }
 </style>

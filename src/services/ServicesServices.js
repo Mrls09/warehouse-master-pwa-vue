@@ -80,6 +80,23 @@ const deleteProduct = async (id) => {
     }
 };
 
+// Función para realizar un movimiento (compra, salida, etc.)
+const createMovement = async (movementData) => {
+    try {
+        const response = await fetchClient.post("/movements/", movementData);
+        if (response && response.ok) {
+            showNotification("success", "Movimiento realizado exitosamente");
+            return await response.json();
+        } else {
+            const error = await response.json();
+            showNotification("error", `Error al realizar el movimiento: ${error.message || "Desconocido"}`);
+        }
+    } catch (error) {
+        showNotification("error", "Error al realizar el movimiento");
+        console.error("Error al realizar el movimiento:", error);
+    }
+};
+
 // Exportar las funciones
 export {
     getProducts,
@@ -87,4 +104,5 @@ export {
     updateProduct,
     createProduct,
     deleteProduct,
+    createMovement,
 };
