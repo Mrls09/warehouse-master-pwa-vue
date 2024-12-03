@@ -1,5 +1,5 @@
-import {axiosClient} from "@/utils/axios-client";
-import {showNotification} from "@/utils/notification";
+import { axiosClient } from "@/utils/axios-client";
+import { showNotification } from "@/utils/notification";
 
 let baseUrl = `/users`;
 
@@ -101,6 +101,16 @@ const cambiarContrasena = async (cambioDto) => {
 };
 
 
+const getMyMovements = async() => {
+    try{
+        const response = await axiosClient.get(`/movements/`);
+        return response.data;
+    } catch (error){
+        showNotification("error", "Error al obtener tus compras")
+    }
+}
+
+
 export default {
-    getUsers, getUser, getMyUser, insert, insertPublic, deleteUser: deleteUser, changeStatus, update, getAllPaginado, cambiarContrasena
+    getUsers, getUser, getMyUser, insert, insertPublic, deleteUser: deleteUser, changeStatus, update, getAllPaginado, cambiarContrasena,getMyMovements
 }

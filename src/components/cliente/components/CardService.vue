@@ -4,7 +4,7 @@
       <v-progress-linear color="blue" height="10" indeterminate></v-progress-linear>
     </template>
 
-    <v-img :src="product.qrCode" height="150" alt="Imagen del producto" />
+    <v-img :src="product.qrCode" height="auto" alt="Imagen del producto" />
 
     <v-card-title class="text-h6">{{ product.name }}</v-card-title>
 
@@ -89,11 +89,11 @@ export default {
           product._rev = existingProduct._rev;  // Guardar la revisión más reciente
           // Si el producto ya existe, actualiza la cantidad
           product.quantity = existingProduct.quantity + 1;
-          
+
           // Actualizar el producto en la base de datos
           await window.db.put(product);
           this.showNotification("success", "El producto ya estaba en el carrito. Cantidad actualizada.");
-          
+
         } catch (error) {
           // Si no se encuentra el producto, lo agregamos
           if (error.name === 'not_found') {

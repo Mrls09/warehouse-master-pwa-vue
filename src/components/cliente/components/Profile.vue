@@ -53,7 +53,7 @@
       <!-- Pie de página -->
       <v-card-subtitle class="text-center">
         <small>
-          Tus datos en <strong>Foodster</strong> son completamente privados y
+          Tus datos en <strong>Warehouse</strong> son completamente privados y
           seguros. Respetamos tu privacidad en todo momento.
         </small>
       </v-card-subtitle>

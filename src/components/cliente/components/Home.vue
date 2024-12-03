@@ -30,6 +30,7 @@ export default {
 
       if (authStore.user) {
         items.value.push({ title: "Perfil", icon: "mdi-account", to: "/home/perfil" });
+        items.value.push({ title: "Compras", icon: "mdi-currency-usd", to: "/home/compras"});
       } else {
         items.value.push(
           { title: "Iniciar sesión", icon: "mdi-login", to: "/home/login" },
