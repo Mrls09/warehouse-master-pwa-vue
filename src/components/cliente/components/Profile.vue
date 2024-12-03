@@ -4,7 +4,7 @@
       <!-- Avatar -->
       <v-avatar size="120" class="mx-auto my-4">
         <img
-          :src="'https://freesvg.org/img/abstract-user-flat-4.png'"
+          :src="'https://img.freepik.com/vector-premium/icono-circulo-usuario-anonimo-ilustracion-vector-estilo-plano-sombra_520826-1931.jpg'"
           alt="Avatar"
         />
       </v-avatar>
