@@ -80,16 +80,15 @@ const deleteProduct = async (id) => {
     }
 };
 
-// Función para realizar un movimiento (compra, salida, etc.)
 const createMovement = async (movementData) => {
     try {
         const response = await fetchClient.post("/movements/", movementData);
-        if (response && response.ok) {
+        // Axios devuelve los datos directamente en response.data
+        if (response && response.status === 200) {
             showNotification("success", "Movimiento realizado exitosamente");
-            return await response.json();
+            return response.data; // Aquí no necesitas llamar a .json()
         } else {
-            const error = await response.json();
-            showNotification("error", `Error al realizar el movimiento: ${error.message || "Desconocido"}`);
+            showNotification("error", `Error al realizar el movimiento: ${response.data?.message || "Desconocido"}`);
         }
     } catch (error) {
         showNotification("error", "Error al realizar el movimiento");

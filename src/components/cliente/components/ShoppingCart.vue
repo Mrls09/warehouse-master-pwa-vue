@@ -44,6 +44,7 @@
 <script>
 import { reactive, onMounted } from "vue";
 import { createMovement } from "@/services/ServicesServices";
+import { showNotification } from "@/utils/notification";
 
 export default {
   name: "ShoppingCart",
@@ -125,33 +126,30 @@ export default {
 
     //Realizar la Compra de los Productos
     const comprarCart = async () => {
-  if (cart.products.length === 0) {
-    alert("El carrito está vacío.");
-    return;
-  }
+      if (cart.products.length === 0) {
+        showNotification("warning", "El carrito está vacío.");
+        return;
+      }
 
-  const payload = {
-    products: cart.products.map((item) => ({
-      product: { uid: item.product._id },
-      quantity: item.quantity,
-    })),
-    status: "EXIT",
-  };
+      const payload = {
+        products: cart.products.map((item) => ({
+          product: { uid: item.product._id },
+          quantity: item.quantity,
+        })),
+        status: "EXIT",
+      };
 
-  try {
-    const result = await createMovement(payload);
-    console.log("Respuesta del servidor:", result); // Para depuración
-    if (result) {
-      alert("Compra realizada con éxito.");
-      await clearCart();
-    }
-  } catch (error) {
-    alert("Error al realizar la compra. Por favor, intenta nuevamente.");
-    console.error("Error al realizar el movimiento:", error);
-  }
-};
-
-
+      try {
+        const result = await createMovement(payload);
+        console.log("Respuesta del servidor:", result); // Para depuración
+        if (result) {
+          await clearCart();
+        }
+      } catch (error) {
+        alert("Error al realizar la compra. Por favor, intenta nuevamente.");
+        console.error("Error al realizar el movimiento:", error);
+      }
+    };
 
     // Cargar el carrito cuando el componente se monte
     onMounted(() => {
