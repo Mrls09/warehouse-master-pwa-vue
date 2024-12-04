@@ -11,7 +11,7 @@
 
       <!-- Título y botón de cerrar sesión -->
       <v-card-title class="d-flex justify-center align-center">
-        <h2 class="mb-0">Mi perfil</h2>
+        <h2 class="mb-0">Mi Perfil</h2>
       </v-card-title>
 
       <v-divider></v-divider>
@@ -23,7 +23,7 @@
             <v-list-item>
               <v-list-item-content>
                 <v-list-item-title class="font-weight-bold"
-                  >Nombre completo:</v-list-item-title
+                  >Nombre Completo:</v-list-item-title
                 >
                 <v-list-item-subtitle>
                   {{ usuario.name }}
@@ -35,7 +35,7 @@
             <v-list-item>
               <v-list-item-content>
                 <v-list-item-title class="font-weight-bold"
-                  >Correo electrónico:</v-list-item-title
+                  >Correo Electrónico:</v-list-item-title
                 >
                 <v-list-item-subtitle>{{ usuario.email }}</v-list-item-subtitle>
               </v-list-item-content>
@@ -44,7 +44,7 @@
         </v-row>
         <v-btn color="red" text @click="signOut">
           <v-icon left>mdi-logout</v-icon>
-          Cerrar sesión
+          Cerrar Sesión
         </v-btn>
       </v-card-text>
 

@@ -28,7 +28,7 @@ function request(method) {
     }
 }
 
-function authHeader(url) {
+export function authHeader(url) {
     const { user } = useAuthStore();
     const isLoggedIn = !!user?.token;
     if (isLoggedIn) {

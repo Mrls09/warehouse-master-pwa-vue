@@ -1,6 +1,6 @@
 <template>
   <div class="shopping-cart">
-    <h1>Carrito de Compras</h1>
+    <h1 class="text-2xl text-center font-bold text-gray-800 mb-6">Carrito de Compras</h1>
     <div v-if="cart.products.length === 0" class="empty-cart">
       <p>El carrito está vacío.</p>
     </div>
@@ -32,6 +32,16 @@
     </div>
     <div class="cart-total">
       <p>Total: ${{ cart.total.toFixed(2) }}</p>
+    </div>
+    <!-- Campo para observaciones -->
+    <div class="observations-section">
+      <label for="observations" class="text-lg font-semibold text-gray-700">Observaciones:</label>
+      <textarea 
+        id="observations" 
+        v-model="observations" 
+        rows="4" 
+        class="observations-textarea"
+        placeholder="Escribe tus observaciones aquí..."></textarea>
     </div>
     <div class="quantity-actions">
       <button @click="clearCart" class="clear-cart-btn">Vaciar carrito</button>
@@ -137,6 +147,7 @@ export default {
           quantity: item.quantity,
         })),
         status: "EXIT",
+        observations: observations.value,
       };
 
       try {
@@ -295,5 +306,28 @@ export default {
 
 .comprar-cart-btn:hover {
   background-color: darkgreen;
+}
+
+/* Estilos para el textarea de observaciones */
+.observations-section {
+  margin-top: 20px;
+}
+
+.observations-textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  resize: vertical;
+  font-size: 16px;
+  line-height: 1.5;
+  background-color: #f9f9f9;
+  margin-top: 8px;
+}
+
+.observations-textarea:focus {
+  outline: none;
+  border-color: #007bff;
+  background-color: #fff;
 }
 </style>

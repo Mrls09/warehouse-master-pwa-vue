@@ -1,5 +1,6 @@
 import { fetchClient } from "@/utils/fetch-client";
 import { showNotification } from "@/utils/notification";
+import { authHeader } from "@/utils/fetch-client";
 
 // Función para obtener productos
 const getProducts = async () => {
@@ -96,6 +97,23 @@ const createMovement = async (movementData) => {
     }
 };
 
+// Función para obtener movimientos
+const getMovements = async () => {
+    try {
+        // Realiza el GET sin autenticación (sin pasar authHeader)
+        const response = await fetchClient.get("/movements/");
+
+        if (response && response.data) {
+            return response.data;  // Asumimos que los movimientos vienen en `data`
+        } else {
+            showNotification("error", "No se encontraron movimientos.");
+        }
+    } catch (error) {
+        showNotification("error", "Error al obtener movimientos");
+        console.error("Error al obtener movimientos:", error);
+    }
+};
+
 // Exportar las funciones
 export {
     getProducts,
@@ -104,4 +122,5 @@ export {
     createProduct,
     deleteProduct,
     createMovement,
+    getMovements
 };
