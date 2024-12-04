@@ -83,29 +83,16 @@ const deleteProduct = async (id) => {
 const createMovement = async (movementData) => {
     try {
         const response = await fetchClient.post("/movements/", movementData);
-        if (response.ok) {
-            const data = await response.json(); // Intenta parsear JSON, pero controla los errores
-            if(data.error){
-              showNotification('error', data.error);
-              throw new Error(data.error); // Re-lanza para manejarlo offline
-            }
+        // Axios devuelve los datos directamente en response.data
+        if (response && response.status === 200) {
             showNotification("success", "Movimiento realizado exitosamente");
-            return data;
+            return response.data; // Aquí no necesitas llamar a .json()
         } else {
-            const errorData = await response.json().catch(() => ({ message: response.statusText })); //Manejar si no es JSON
-            showNotification("error", `Error al realizar el movimiento: ${errorData.message}`);
-            throw new Error(`Error de servidor: ${response.status} ${errorData.message}`);
+            showNotification("error", `Error al realizar el movimiento: ${response.data?.message || "Desconocido"}`);
         }
     } catch (error) {
-        // Aquí se maneja la falta de internet o cualquier otro error.
-        if (error.message.includes("Network") || error.message.includes("Failed to fetch")) {
-            showNotification("warning", "Sin conexión a internet. Se guardará el pedido para enviarlo más tarde.");
-            // ... Guarda el pedido offline ...
-        } else {
-            showNotification("error", `Error al realizar el movimiento: ${error.message}`);
-            console.error("Error al realizar el movimiento:", error);
-        }
-        throw error; // Re-lanza el error para que el catch de comprarCart lo maneje
+        showNotification("error", "Error al realizar el movimiento");
+        console.error("Error al realizar el movimiento:", error);
     }
 };
 
