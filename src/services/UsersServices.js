@@ -101,12 +101,15 @@ const cambiarContrasena = async (cambioDto) => {
 };
 
 
-const getMyMovements = async() => {
-    try{
-        const response = await axiosClient.get(`/movements/`);
+const getMyMovements = async () => {
+    try {
+        const url = `/movements/`;
+        console.log("Se envía la petición a:", url);
+        const response = await axiosClient.get(url);
+        console.log("response.data", response.data);
         return response.data;
-    } catch (error){
-        showNotification("error", "Error al obtener tus compras")
+    } catch (error) {
+        showNotification("error", "Error al obtener tus compras");
     }
 }
 

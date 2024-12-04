@@ -102,9 +102,19 @@ export default {
         console.error("Error al obtener el usuario:", error);
       }
     },
+    async getMyMovements() {
+      try {
+        const response = await UsersServices.getMyMovements();
+        console.log(response.data);
+        return response.data;
+      } catch (error) {
+        console.error("Error al obtener tus compras:", error);
+      }
+    }
   },
   mounted() {
-    this.getUserData(); // Carga los datos al montar el componentes
+    this.getUserData(); 
+    this.getMyMovements();// Carga los datos al montar el componentes
   },
 };
 </script>

@@ -125,7 +125,7 @@ export default {
     };
 
     //Realizar la Compra de los Productos
-    const comprarCart = async () => {
+       const comprarCart = async () => {
       if (cart.products.length === 0) {
         showNotification("warning", "El carrito está vacío.");
         return;
@@ -140,20 +140,60 @@ export default {
       };
 
       try {
-        const result = await createMovement(payload);
-        console.log("Respuesta del servidor:", result); // Para depuración
-        if (result) {
+        const response = await createMovement(payload);
+        if (response && response.status === 200) {
+          showNotification("success", "Movimiento realizado exitosamente");
           await clearCart();
+        } else {
+          showNotification("error", `Error al realizar el movimiento: ${response.data?.message || "Desconocido"}`);
         }
       } catch (error) {
-        alert("Error al realizar la compra. Por favor, intenta nuevamente.");
-        console.error("Error al realizar el movimiento:", error);
+        if (error.message.includes("Network") || error.message.includes("Failed to fetch")) {
+          showNotification("warning", "Sin conexión a internet. Se guardará el pedido para enviarlo más tarde.");
+          await saveOrderOffline(payload);
+        } else {
+          showNotification("error", "Error al realizar el movimiento. Intenta nuevamente.");
+          console.error("Error al realizar el movimiento:", error);
+        }
+      }
+    };
+
+    const sendOfflineOrders = async () => {
+      try {
+        const { docs } = await db.allDocs({ include_docs: true });
+        if (docs.length > 0) {
+          for (const doc of docs) {
+            try {
+              const response = await createMovement(doc.doc);
+              if (response && response.status === 200) {
+                await db.remove(doc);
+                showNotification("success", "Pedido offline enviado con éxito");
+              } else {
+                showNotification("warning", "Error al enviar pedido offline. Intenta nuevamente.");
+              }
+            } catch (error) {
+              showNotification("warning", "Error al enviar pedido offline. Verifica tu conexión a internet.");
+              console.error("Error al enviar pedido offline:", error);
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error al obtener pedidos offline:", error);
+      }
+    };
+
+    const saveOrderOffline = async (payload) => {
+      try {
+        await db.put({ _id: new Date().toISOString(), ...payload });
+      } catch (error) {
+        console.error("Error al guardar el pedido offline:", error);
       }
     };
 
     // Cargar el carrito cuando el componente se monte
     onMounted(() => {
       loadCart();
+      await sendOfflineOrders();
     });
 
     return {
