@@ -84,16 +84,22 @@ const deleteProduct = async (id) => {
 const createMovement = async (movementData) => {
     try {
         const response = await fetchClient.post("/movements/", movementData);
-        // Axios devuelve los datos directamente en response.data
         if (response && response.status === 200) {
             showNotification("success", "Movimiento realizado exitosamente");
-            return response.data; // Aquí no necesitas llamar a .json()
+            return response.data; 
+        } else if (response){ //check for other status codes
+            showNotification("error", `Error al realizar el movimiento: ${response.data?.message || response.statusText}`);
+            return null; // Indicate failure explicitly
         } else {
-            showNotification("error", `Error al realizar el movimiento: ${response.data?.message || "Desconocido"}`);
+            //Handle the network error that could happen if the request fails (e.g., offline)
+            showNotification("error", `Error al realizar el movimiento: Sin conexión a internet.`);
+            return null;
         }
     } catch (error) {
-        showNotification("error", "Error al realizar el movimiento");
+        //Catch both fetch and other errors (like JSON parse errors if the response isn't valid JSON)
+        showNotification("error", "Error al realizar el movimiento: Verifica tu conexión a internet.");
         console.error("Error al realizar el movimiento:", error);
+        return null;
     }
 };
 

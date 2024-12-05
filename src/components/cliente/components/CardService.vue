@@ -85,19 +85,19 @@ export default {
         };
 
         try {
-          const existingProduct = await window.db.get(product._id);
+          const existingProduct = await window.dbCarrito.get(product._id);
           product._rev = existingProduct._rev;  // Guardar la revisión más reciente
           // Si el producto ya existe, actualiza la cantidad
           product.quantity = existingProduct.quantity + 1;
 
           // Actualizar el producto en la base de datos
-          await window.db.put(product);
+          await window.dbCarrito.put(product);
           this.showNotification("success", "El producto ya estaba en el carrito. Cantidad actualizada.");
 
         } catch (error) {
           // Si no se encuentra el producto, lo agregamos
           if (error.name === 'not_found') {
-            await window.db.put(product);
+            await window.dbCarrito.put(product);
             this.showNotification("success", "Producto agregado al carrito.");
           } else {
             throw error; // Si el error no es 'not_found', lo lanzamos

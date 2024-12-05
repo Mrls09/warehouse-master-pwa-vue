@@ -19,10 +19,11 @@
   
   <script>
     // Inicializar la base de datos 'carrito'
-    const db = new PouchDB('carrito');
-    
+    const dbCarrito = new PouchDB('carrito');
+    const dbComprarCarrito = new PouchDB('comprar_carrito');
     // Hacer la base de datos accesible globalmente
-    window.db = db;
+    window.dbCarrito = dbCarrito;
+    window.dbComprarCarrito = dbComprarCarrito;
   </script>
 </body>
 

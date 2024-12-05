@@ -1,12 +1,18 @@
 <template>
   <div class="shopping-cart">
-    <h1 class="text-2xl text-center font-bold text-gray-800 mb-6">Carrito de Compras</h1>
+    <h1 class="text-2xl text-center font-bold text-gray-800 mb-6">
+      Carrito de Compras
+    </h1>
     <div v-if="cart.products.length === 0" class="empty-cart">
       <p>El carrito está vacío.</p>
     </div>
     <div v-else class="cart-items">
       <ul>
-        <li v-for="(item, index) in cart.products" :key="index" class="cart-item">
+        <li
+          v-for="(item, index) in cart.products"
+          :key="index"
+          class="cart-item"
+        >
           <div class="item-info">
             <div class="product-name">
               <h3>{{ item.product.name }}</h3>
@@ -21,11 +27,23 @@
               <img :src="item.product.qrCode" alt="QR Code" />
             </div>
             <div class="quantity-actions">
-              <button @click="incrementQuantity(item.product._id)" class="quantity-btn">+</button>
+              <button
+                @click="incrementQuantity(item.product._id)"
+                class="quantity-btn"
+              >
+                +
+              </button>
               <span class="quantity-display">{{ item.quantity }}</span>
-              <button @click="decrementQuantity(item.product._id)" class="quantity-btn">-</button>
+              <button
+                @click="decrementQuantity(item.product._id)"
+                class="quantity-btn"
+              >
+                -
+              </button>
             </div>
-            <button @click="removeProduct(item.product._id)" class="remove-btn">Eliminar</button>
+            <button @click="removeProduct(item.product._id)" class="remove-btn">
+              Eliminar
+            </button>
           </div>
         </li>
       </ul>
@@ -34,18 +52,22 @@
       <p>Total: ${{ cart.total.toFixed(2) }}</p>
     </div>
     <!-- Campo para observaciones -->
-    <div class="observations-section">
-      <label for="observations" class="text-lg font-semibold text-gray-700">Observaciones:</label>
-      <textarea 
-        id="observations" 
-        v-model="observations" 
-        rows="4" 
+    <div v-if="cart.products.length > 0" class="observations-section">
+      <!-- Added v-if here -->
+      <label for="observations" class="text-lg font-semibold text-gray-700"
+        >Observaciones:</label
+      >
+      <textarea
+        id="observations"
+        v-model="observations"
+        rows="4"
         class="observations-textarea"
-        placeholder="Escribe tus observaciones aquí..."></textarea>
+        placeholder="Puedes escribir referencias, instrucciones o comentarios adicionales aquí."
+      ></textarea>
     </div>
     <div class="quantity-actions">
       <button @click="clearCart" class="clear-cart-btn">Vaciar carrito</button>
-      <br>
+      <br />
       <button @click="comprarCart" class="comprar-cart-btn">Comprar</button>
     </div>
   </div>
@@ -76,7 +98,7 @@ export default {
     // Cargar los productos del carrito desde la base de datos
     const loadCart = async () => {
       try {
-        const result = await window.db.allDocs({ include_docs: true });
+        const result = await window.dbCarrito.allDocs({ include_docs: true });
         cart.products = result.rows.map((row) => ({
           product: row.doc,
           quantity: row.doc.quantity || 1, // Si no hay cantidad, se asigna 1 por defecto
@@ -93,7 +115,7 @@ export default {
       if (item) {
         item.quantity += 1;
         item.product.quantity = item.quantity; // Actualizar la cantidad en el producto
-        await window.db.put(item.product); // Guardar el cambio en la base de datos
+        await window.dbCarrito.put(item.product); // Guardar el cambio en la base de datos
         calculateTotal(); // Recalcular el total
       }
     };
@@ -104,7 +126,7 @@ export default {
       if (item && item.quantity > 1) {
         item.quantity -= 1;
         item.product.quantity = item.quantity; // Actualizar la cantidad en el producto
-        await window.db.put(item.product); // Guardar el cambio en la base de datos
+        await window.dbCarrito.put(item.product); // Guardar el cambio en la base de datos
         calculateTotal(); // Recalcular el total
       } else if (item) {
         await removeProduct(uid); // Eliminar producto si la cantidad es 1
@@ -115,7 +137,7 @@ export default {
     const removeProduct = async (uid) => {
       const index = cart.products.findIndex((item) => item.product._id === uid);
       if (index !== -1) {
-        await window.db.remove(cart.products[index].product); // Eliminar de la base de datos
+        await window.dbCarrito.remove(cart.products[index].product); // Eliminar de la base de datos
         cart.products.splice(index, 1); // Eliminar del arreglo
         calculateTotal(); // Recalcular el total
       }
@@ -124,8 +146,10 @@ export default {
     // Vaciar el carrito
     const clearCart = async () => {
       try {
-        const allDocs = await window.db.allDocs();
-        const deleteOps = allDocs.rows.map((row) => window.db.remove(row.id, row.value.rev));
+        const allDocs = await window.dbCarrito.allDocs();
+        const deleteOps = allDocs.rows.map((row) =>
+          window.dbCarrito.remove(row.id, row.value.rev)
+        );
         await Promise.all(deleteOps); // Eliminar todos los productos de la base de datos
         cart.products = []; // Vaciar el carrito
         calculateTotal(); // Recalcular el total
@@ -136,37 +160,89 @@ export default {
 
     //Realizar la Compra de los Productos
     const comprarCart = async () => {
-      if (cart.products.length === 0) {
-        showNotification("warning", "El carrito está vacío.");
-        return;
-      }
+  if (cart.products.length === 0) {
+    showNotification("warning", "El carrito está vacío.");
+    return;
+  }
 
-      const payload = {
-        products: cart.products.map((item) => ({
-          product: { uid: item.product._id },
-          quantity: item.quantity,
-        })),
-        status: "EXIT",
-        observations: observations.value,
-      };
+  const payload = {
+    products: cart.products.map((item) => ({
+      product: { uid: item.product._id },
+      quantity: item.quantity,
+    })),
+    status: "EXIT",
+    observations: observations.value,
+  };
 
-      try {
+  try {
         const result = await createMovement(payload);
-        console.log("Respuesta del servidor:", result); // Para depuración
-        if (result) {
-          await clearCart();
+        if (result) { // Check if createMovement was successful
+            await clearCart();
+        } else { // If createMovement failed (likely network error)
+            await storeOfflineOrder(payload);
+            showNotification('warning', 'Sin conexión. La orden se guardará para envío posterior.');
+            clearCart();
         }
-      } catch (error) {
-        alert("Error al realizar la compra. Por favor, intenta nuevamente.");
-        console.error("Error al realizar el movimiento:", error);
+    } catch (error) {
+        console.error('Error en comprarCart:', error); // Log the error
+        showNotification('error', 'Error al procesar la compra. Intenta de nuevo.'); //More informative message
+    }
+};
+
+// Function to store offline orders in PouchDB
+const storeOfflineOrder = async (payload) => {
+    try {
+      const newOrder = {
+        _id: new Date().toISOString(), // Unique ID for each order
+        payload: payload,
+        sent: false, // Flag to indicate if the order has been sent
+      };
+      await window.dbComprarCarrito.put(newOrder);
+    } catch (error) {
+        console.error("Error al guardar la orden offline:", error);
+    }
+};
+
+// Function to send pending orders when online
+const sendPendingOrders = async () => {
+    try {
+        const orders = await window.dbComprarCarrito.allDocs({ include_docs: true });
+        const pendingOrders = orders.rows.filter(row => !row.doc.sent);
+
+        for (const order of pendingOrders) {
+  try {
+    const result = await createMovement(order.doc.payload);
+    if (result) {
+      try { // try...catch añadido
+        await window.dbComprarCarrito.remove(order.doc._id, order.doc._rev);
+        console.log('Orden enviada correctamente:', order.doc._id);
+      } catch (removeError) {
+        console.error('Error al eliminar la orden de la base de datos offline:', removeError, 'ID:', order.doc._id);
       }
-    };
+    }
+  } catch (error) {
+    console.error('Error al enviar orden:', error, 'ID:', order.doc._id);
+  }
+}
+    } catch (error) {
+        console.error('Error al procesar las órdenes pendientes:', error);
+    }
+};
+
+//Check internet connection
+const checkOnlineStatus = async () => {
+    if (navigator.onLine) {
+        await sendPendingOrders();
+    }
+}
+
 
     // Cargar el carrito cuando el componente se monte
     onMounted(() => {
       loadCart();
+      checkOnlineStatus(); 
     });
-
+    window.addEventListener('online', checkOnlineStatus);
     return {
       cart,
       incrementQuantity,

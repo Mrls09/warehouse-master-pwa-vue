@@ -1,7 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import { useAuthStore } from "@/stores";
-import TableDirecciones from "../components/admin/personal/direcciones/TableDirecciones.vue";
+
 
 Vue.use(VueRouter);
 const router = new VueRouter({
@@ -14,43 +14,7 @@ const router = new VueRouter({
         component: () => import("../components/admin/components/SidebarNavbar.vue"),
         children: [{
             path: "/", name: "dashboard", component: () => import("../components/admin/Dashboard.vue"),
-        }, {
-            path: "/admin/users", name: "users", component: () => import("../components/admin/users/TableUsers.vue"),
-        }, {
-            path: "/admin/personal",
-            name: "personal",
-            component: () => import("../components/admin/personal/TablePersonal.vue"),
-        }, {
-            path: "/admin/eventos",
-            name: "eventos",
-            component: () => import("../components/admin/eventos/TableEventos.vue"),
-        }, {
-            path: "/admin/roles", name: "roles", component: () => import("../components/admin/roles/TableRoles.vue"),
-        }, {
-            path: "/admin/servicios",
-            name: "servicios",
-            component: () => import("../components/admin/services/TableServices.vue"),
-        }, {
-            path: "/admin/categorias",
-            name: "categorias",
-            component: () => import("../components/admin/categories/TableCategories.vue"),
-        }, {
-            path: "/admin/paquete",
-            name: "package",
-            component: () => import("../components/admin/paquete/TablePackages.vue"),
-        }, {
-            path: "/admin/direcciones", name: "direcciones", component: TableDirecciones,
-        }, {
-            path: "/admin/perfil", name: "perfilAdmin", component: () => import("../components/public/Profile.vue"),
-        }
-            , {
-            path: "/admin/personalEvento", name: "personalEvento", component: () => import("../components/admin/personalEvento/TablePersonalEvento.vue"),
-        }, {
-            path: "/admin/asignarPaqueteServicio",
-            name: "asignarPaqueteServicio",
-            component: () => import("../components/admin/services/AsignarPaqueteServicio.vue"),
-        }
-
+        },
         ],
     }, {
         path: "/home",
