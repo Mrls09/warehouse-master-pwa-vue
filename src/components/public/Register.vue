@@ -104,7 +104,7 @@
         </v-form>
         <div class="mt-4 text-sm text-gray-600 text-center">
           <p>
-            ¿Ya eres parte de Foodster?
+            ¿Ya eres parte de warehouse?
             <a href="/home/login/" class="text-black hover:underline"
               >¡Inicia Sesión Aquí!</a
             >
@@ -120,9 +120,9 @@ import { useAuthStore } from "@/stores";
 import UsersServices from "@/services/UsersServices";
 
 export default {
-  components: {
+  /*components: {
     Captcha: () => import("@/components/public/Captcha.vue"),
-  },
+  },*/
 
   data() {
     return {
