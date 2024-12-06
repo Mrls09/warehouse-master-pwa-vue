@@ -9,6 +9,7 @@ import 'sweetalert2/dist/sweetalert2.min.css';
 import 'animate.css';
 import VueNoty from 'vuejs-noty'
 import 'vuejs-noty/dist/vuejs-noty.css'
+import 'regenerator-runtime/runtime';
 
 const pinia = createPinia();
 
