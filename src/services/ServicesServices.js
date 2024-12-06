@@ -1,6 +1,5 @@
 import { fetchClient } from "@/utils/fetch-client";
 import { showNotification } from "@/utils/notification";
-import { authHeader } from "@/utils/fetch-client";
 
 // Función para obtener productos
 const getProducts = async () => {

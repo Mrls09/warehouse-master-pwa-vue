@@ -8,15 +8,6 @@ const router = new VueRouter({
     mode: "history", base: import.meta.env.BASE_URL, routes: [{
         path: "/", redirect: "/home/inicio",
     }, {
-        path: "/admin",
-        meta: { roles: ['ADMIN'] },
-        name: "admin",
-        component: () => import("../components/admin/components/SidebarNavbar.vue"),
-        children: [{
-            path: "/", name: "dashboard", component: () => import("../components/admin/Dashboard.vue"),
-        },
-        ],
-    }, {
         path: "/home",
         name: "home",
         component: () => import("../components/cliente/components/Home.vue"),
@@ -66,7 +57,7 @@ const router = new VueRouter({
                     next();
                 }
             },
-        }, {
+        }, /*{
 
             path: "/restablecer/correo/",
             meta: { auth: false },
@@ -93,22 +84,17 @@ const router = new VueRouter({
                     next();
                 }
             },
-        }, {
+        }*/, {
             path: "/home/carrito/",
             name: "carrito",
             component: () => import("../components/cliente/components/ShoppingCart.vue"),
         },
-
-
         ],
     }, {
         path: "/personal",
         meta: { roles: ['PERSONAL'] },
         name: "personalScreen",
-        component: () => import("../components/personal/components/SidebarNavbar.vue"),
         children: [{
-            path: "/", name: "eventos", component: () => import("../components/personal/components/Eventos.vue"),
-        }, {
             path: "/personal/perfil",
             name: "perfilPersonal",
             component: () => import("../components/public/Profile.vue"),
