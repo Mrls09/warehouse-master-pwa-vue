@@ -1,190 +1,248 @@
 <template>
-  <v-card
-      :loading="loading"
-      class="mx-auto my-4 animate__animated animate__rubberBand"
-      max-width="300"
-  >
-    <template slot="progress">
-      <v-progress-linear
-          color="blue"
-          height="10"
-          indeterminate
-      ></v-progress-linear>
+  <v-card :loading="loading" class="mx-auto my-4 animate__animated animate__rubberBand" max-width="300">
+    <template v-slot:progress>
+      <v-progress-linear color="blue" height="10" indeterminate></v-progress-linear>
     </template>
 
-    <v-img height="150" :src="servicio.imagen"></v-img>
-    <v-rating
-        :value="promedio"
-        color="amber"
-        dense
-        half-increments
-        readonly
-        size="12"
-    ></v-rating>
+    <v-img :src="product.qrCode" height="auto" alt="Imagen del producto" />
 
-    <v-card-title class="text-h6">{{ servicio.nombre }}</v-card-title>
+    <v-card-title class="text-h6">{{ product.name }}</v-card-title>
 
     <v-card-text>
-      <div class="my-2 text-caption">
-        {{ servicio.categoria.nombre }}
-      </div>
-
-      <div class="text-caption">
-        {{ servicio.descripcion }}
-      </div>
-
       <div class="my-2 font-weight-black">
-        <template v-if="servicio.precioDescuento > 0">
-          <s>${{ servicio.precio.toFixed(2) }}</s>
-          ${{ servicio.precioDescuento.toFixed(2) }}
-        </template>
-        <template v-else>
-          ${{ servicio.precio.toFixed(2) }}
-        </template>
+        <strong>Precio:</strong> ${{ formatPrice(product.price) }}
+      </div>
+      <div class="my-2 text-caption">
+        <strong>Proveedor:</strong> {{ product.supplier?.name || 'No especificado' }}
+      </div>
+      <div class="my-2 text-caption">
+        <strong>Categoría:</strong> {{ product.category?.name || 'No especificada' }}
+      </div>
+      <div class="text-caption">
+        <strong>Descripción:</strong> {{ product.description || 'Sin descripción' }}
       </div>
     </v-card-text>
 
     <v-divider class="mx-2"></v-divider>
-    <v-btn
-        color="deep-purple lighten-2"
-        text
-        @click="showCalificaciones"
-    >
-      Ver calificaciones
+
+    <v-btn color="deep-purple lighten-2" text @click="showElementos">
+      Ver elementos del paquete
     </v-btn>
+
     <v-card-actions>
-      <v-btn
-          v-if="!inCart"
-          color="deep-purple lighten-2"
-          text
-          @click="agregarElemento(servicio)"
-      >
+      <v-btn color="deep-purple lighten-2" text @click="agregarProducto">
         Agregar al carrito
       </v-btn>
-      <div v-else>Ya en carrito</div>
     </v-card-actions>
-    <v-dialog
-        v-model="showDialog"
-        class="mx-auto"
-    >
-      <v-card>
-        <v-card-title class="headline">
-          Calificaciones
-        </v-card-title>
 
-        <v-card-text>
-          <v-list>
-            <v-list-item-title>
-              Usuario de foodster
-            </v-list-item-title>
-            <v-list-item
-                v-for="(calificacion, index) in calificaciones"
-                :key="index"
-            >
-              <v-list-item-content>
-                <v-rating
-                    :value="calificacion.calificacion"
-                    color="amber"
-                    dense
-                    half-increments
-                    readonly
-                    size="12"
-                ></v-rating>
-                <v-list-item-title>
-                  {{ calificacion.comentario }}
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list>
-        </v-card-text>
-        <v-pagination
-            v-model="currentPage"
-            :length="totalPages"
-            :total-visible="5"
-            @input="fetchCalificaciones"
-            class="my-4 w-11/12 mx-auto"
-        ></v-pagination>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-              color="deep-purple lighten-2"
-              text
-              @click="showDialog = false"
-          >
-            Cerrar
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-
+    <!-- Snackbar para mostrar las notificaciones -->
+    <v-snackbar v-model="snackbar.visible" :color="snackbar.color" timeout="3000">
+      {{ snackbar.message }}
+    </v-snackbar>
   </v-card>
 </template>
 
 <script>
-import {useCartStore} from "@/stores/cart.store";
-import {avgCalifServicio, getCalificacionesPaginadasByServicio} from "@/services/CalificationService";
-
 export default {
-  data: () => ({
-    loading: false,
-    selection: 1,
-    show: false,
-    showDialog: false,
-    inCart: false,
-    promedio: 0,
-    calificaciones: [],
-    currentPage: 1,
-    totalPages: 0,
-    itemsPerPage: 10,
-  }),
-
+  name: "CardService",
   props: {
-    servicio: {
+    product: {
       type: Object,
+      required: true,
+      default: () => ({
+        name: "Producto desconocido",
+        price: 0,
+        supplier: { name: "No especificado" },
+        category: { name: "No especificada" },
+        description: "Sin descripción",
+        qrCode: "",
+      }),
     },
   },
-  mounted() {
-    this.setIsInCart();
-    this.getPromedio();
+  data() {
+    return {
+      loading: false,
+      snackbar: {
+        visible: false,
+        message: "",
+        color: "",
+      },
+    };
   },
-
-
   methods: {
-    async showCalificaciones() {
-      this.showDialog = true;
-      await this.fetchCalificaciones();
-    },
-
-    async getPromedio() {
-      this.promedio = await avgCalifServicio(this.servicio.idServicio)
-    },
-
-    async fetchCalificaciones() {
+    async agregarProducto() {
       this.loading = true;
-      const response = await getCalificacionesPaginadasByServicio(this.servicio.idServicio, this.currentPage - 1, this.itemsPerPage);
-      if (response) {
-        this.totalPages = response.totalPages;
-        this.calificaciones = response.content;
-      } else {
-        this.totalPages = 0;
-        this.calificaciones = [];
-        this.currentPage = 1;
+      try {
+        const product = {
+          _id: this.product.uid,
+          name: this.product.name,
+          price: this.product.price,
+          description: this.product.description,
+          qrCode: this.product.qrCode,
+          supplier: this.product.supplier?.name || 'No especificado',
+          category: this.product.category?.name || 'No especificada',
+          quantity: 1,
+        };
+
+        try {
+          const existingProduct = await window.dbCarrito.get(product._id);
+          product._rev = existingProduct._rev;  // Guardar la revisión más reciente
+          // Si el producto ya existe, actualiza la cantidad
+          product.quantity = existingProduct.quantity + 1;
+
+          // Actualizar el producto en la base de datos
+          await window.dbCarrito.put(product);
+          this.showNotification("success", "El producto ya estaba en el carrito. Cantidad actualizada.");
+
+        } catch (error) {
+          // Si no se encuentra el producto, lo agregamos
+          if (error.name === 'not_found') {
+            await window.dbCarrito.put(product);
+            this.showNotification("success", "Producto agregado al carrito.");
+          } else {
+            throw error; // Si el error no es 'not_found', lo lanzamos
+          }
+        }
+
+      } catch (error) {
+        // Manejo del error específico de conflicto
+        if (error.status === 409) {
+          console.error("Conflicto al actualizar el documento. Intentando resolver...");
+          this.showNotification("error", "Conflicto al actualizar el producto.");
+        } else {
+          console.error("Error al agregar el producto al carrito:", error);
+          this.showNotification("error", "Error al agregar el producto al carrito.");
+        }
+      } finally {
+        this.loading = false;
       }
-      this.loading = false;
     },
 
-    agregarElemento(item) {
-      const cart = useCartStore();
-      this.loading = true;
-      cart.addStuff(item);
-      this.setIsInCart();
-      this.loading = false;
+    showNotification(type, message) {
+      this.snackbar.message = message;
+      this.snackbar.color = type === "success" ? "green" : "red";
+      this.snackbar.visible = true;
     },
-    setIsInCart() {
-      const cart = useCartStore();
-      this.inCart = cart.isInCart(this.$props.servicio.idServicio);
+
+    formatPrice(price) {
+      return price ? price.toFixed(2) : "0.00";
     },
+
+    showElementos() {
+      // Aquí puedes agregar la lógica para mostrar los elementos del paquete, si es necesario.
+    }
   },
 };
 </script>
+
+<style scoped>
+/* El estilo permanece igual */
+.shopping-cart {
+  padding: 20px;
+}
+
+.empty-cart {
+  text-align: center;
+  font-size: 18px;
+  color: gray;
+}
+
+.cart-items ul {
+  list-style: none;
+  padding: 0;
+}
+
+.cart-items li.cart-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 15px;
+}
+
+.item-info {
+  display: flex;
+  align-items: center;
+}
+
+.product-image {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  margin-right: 15px;
+}
+
+.product-name h3 {
+  font-size: 18px;
+  margin: 0;
+  font-weight: bold;
+}
+
+.product-name p {
+  font-size: 14px;
+  color: gray;
+}
+
+.quantity-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.quantity-btn {
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 18px;
+  width: 40px;
+}
+
+.quantity-btn:hover {
+  background-color: #0056b3;
+}
+
+.quantity-btn:focus {
+  outline: none;
+}
+
+.quantity-display {
+  font-size: 18px;
+  margin: 0 15px;
+}
+
+.remove-btn {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  margin-top: 10px;
+  border-radius: 5px;
+}
+
+.remove-btn:hover {
+  background-color: #d32f2f;
+}
+
+.cart-total {
+  margin-top: 20px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.clear-cart-btn {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: red;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.clear-cart-btn:hover {
+  background-color: darkred;
+}
+</style>

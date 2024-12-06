@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import {createPinia} from 'pinia';
+import { createPinia } from 'pinia';
 import App from './App.vue'
 import router from './router'
 import vuetify from '@/plugins/vuetify'
@@ -10,7 +10,6 @@ import 'animate.css';
 import VueNoty from 'vuejs-noty'
 import 'vuejs-noty/dist/vuejs-noty.css'
 
-
 const pinia = createPinia();
 
 Vue.use(VueNoty, {
@@ -19,6 +18,19 @@ Vue.use(VueNoty, {
 })
 Vue.use(VueSweetalert2)
 Vue.use(pinia);
+
 new Vue({
     router, vuetify, pinia, render: (h) => h(App)
 }).$mount('#app')
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/serviceWorker.js')
+      .then((registration) => {
+        console.log('Service Worker registered with scope:', registration.scope);
+      })
+      .catch((error) => {
+        console.error('Service Worker registration failed:', error);
+      });
+  });
+}

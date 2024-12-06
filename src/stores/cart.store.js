@@ -1,55 +1,55 @@
-import {defineStore} from 'pinia';
-import {showNotification} from "@/utils/notification";
-import {getServiciosByPaquete} from "@/services/ServicesServices";
-
+import { defineStore } from 'pinia';
+import { showNotification } from "@/utils/notification";
 
 export const useCartStore = defineStore({
     id: 'cart',
     state: () => ({
-        cart: JSON.parse(localStorage.getItem('cart')) || [],
+        cart: JSON.parse(localStorage.getItem('cart')) || { products: [], status: 'EXIT' },
         idPaquete: localStorage.getItem('idPaquete') || ''
     }),
     actions: {
-        addStuff(nuevoServicio) {
-            this.cart = [...this.cart, {...nuevoServicio, cantidad: 1}];
+        // Agregar un producto al carrito
+        addStuff(nuevoProducto) {
+            this.cart.products = [...this.cart.products, { product: { uid: nuevoProducto.uid }, quantity: 1 }];
             localStorage.setItem('cart', JSON.stringify(this.cart));
-            showNotification('success', 'Articulo añadido correctamente');
+            showNotification('success', 'Producto añadido correctamente');
         },
-        substractStuff(idServicio) {
-            this.cart = this.cart.filter((item) => item.idServicio !== idServicio);
+
+        // Eliminar un producto del carrito
+        substractStuff(uid) {
+            this.cart.products = this.cart.products.filter((item) => item.product.uid !== uid);
             localStorage.setItem('cart', JSON.stringify(this.cart));
-            showNotification('success', 'Articulo sustraido correctamente');
-            console.log(this.$state);
+            showNotification('success', 'Producto sustraído correctamente');
         },
-        isInCart(idServicio) {
-            return this.cart.some(item => item.idServicio === idServicio);
+
+        // Verificar si un producto está en el carrito
+        isInCart(uid) {
+            return this.cart.products.some(item => item.product.uid === uid);
         },
+
+        // Obtener el total del carrito
         getTotal() {
-            return this.cart.reduce((suma, item) => {
-                let precio = item.precioDescuento > 0 ? item.precioDescuento : item.precio;
-                return suma + (precio * item.cantidad)
-            }, 0)
+            return this.cart.products.reduce((suma, item) => {
+                return suma + (item.product.price * item.quantity);
+            }, 0);
         },
+
+        // Vaciar el carrito
         deleteAll() {
-            this.cart = [];
+            this.cart = { products: [], status: 'EXIT' };
             this.idPaquete = '';
             localStorage.removeItem('idPaquete');
             localStorage.setItem('cart', JSON.stringify(this.cart));
         },
 
-        setIdPaquete(idPaquete) {
-            this.idPaquete = idPaquete;
-            localStorage.setItem('idPaquete', idPaquete);
+        // Agregar un producto al carrito verificando duplicados
+        setProducto(uid) {
+            const producto = { uid }; // Ajustar si necesitas más propiedades del producto
+            if (this.isInCart(uid)) {
+                showNotification('info', 'El producto ya está en el carrito');
+                return;
+            }
+            this.addStuff(producto);
         },
-
-        async setPaquete(idPaquete) {
-            this.deleteAll();
-            this.setIdPaquete(idPaquete);
-            const serviciosPaquete = await getServiciosByPaquete(idPaquete);
-            serviciosPaquete.forEach(serviciosPaquete => {
-                this.addStuff(serviciosPaquete.servicio);
-            });
-            showNotification('success', 'Paquete añadido correctamente')
-        }
     }
 });
