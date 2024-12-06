@@ -160,81 +160,81 @@ export default {
 
     //Realizar la Compra de los Productos
     const comprarCart = async () => {
-  if (cart.products.length === 0) {
-    showNotification("warning", "El carrito está vacío.");
-    return;
-  }
+      if (cart.products.length === 0) {
+        showNotification("warning", "El carrito está vacío.");
+        return;
+      }
 
-  const payload = {
-    products: cart.products.map((item) => ({
-      product: { uid: item.product._id },
-      quantity: item.quantity,
-    })),
-    status: "EXIT",
-    observations: observations.value,
-  };
-
-  try {
-        const result = await createMovement(payload);
-        if (result) { // Check if createMovement was successful
-            await clearCart();
-        } else { // If createMovement failed (likely network error)
-            await storeOfflineOrder(payload);
-            showNotification('warning', 'Sin conexión. La orden se guardará para envío posterior.');
-            clearCart();
-        }
-    } catch (error) {
-        console.error('Error en comprarCart:', error); // Log the error
-        showNotification('error', 'Error al procesar la compra. Intenta de nuevo.'); //More informative message
-    }
-};
-
-// Function to store offline orders in PouchDB
-const storeOfflineOrder = async (payload) => {
-    try {
-      const newOrder = {
-        _id: new Date().toISOString(), // Unique ID for each order
-        payload: payload,
-        sent: false, // Flag to indicate if the order has been sent
+      const payload = {
+        products: cart.products.map((item) => ({
+          product: { uid: item.product._id },
+          quantity: item.quantity,
+        })),
+        status: "EXIT",
+        observations: observations.value,
       };
-      await window.dbComprarCarrito.put(newOrder);
-    } catch (error) {
-        console.error("Error al guardar la orden offline:", error);
-    }
-};
 
-// Function to send pending orders when online
-const sendPendingOrders = async () => {
-    try {
-        const orders = await window.dbComprarCarrito.allDocs({ include_docs: true });
-        const pendingOrders = orders.rows.filter(row => !row.doc.sent);
+      try {
+            const result = await createMovement(payload);
+            if (result) { // Check if createMovement was successful
+                await clearCart();
+            } else { // If createMovement failed (likely network error)
+                await storeOfflineOrder(payload);
+                showNotification('warning', 'Sin conexión. La orden se guardará para envío posterior.');
+                clearCart();
+            }
+        } catch (error) {
+            console.error('Error en comprarCart:', error); // Log the error
+            showNotification('error', 'Error al procesar la compra. Intenta de nuevo.'); //More informative message
+        }
+    };
 
-        for (const order of pendingOrders) {
-  try {
-    const result = await createMovement(order.doc.payload);
-    if (result) {
-      try { // try...catch añadido
-        await window.dbComprarCarrito.remove(order.doc._id, order.doc._rev);
-        console.log('Orden enviada correctamente:', order.doc._id);
-      } catch (removeError) {
-        console.error('Error al eliminar la orden de la base de datos offline:', removeError, 'ID:', order.doc._id);
+    // Function to store offline orders in PouchDB
+    const storeOfflineOrder = async (payload) => {
+        try {
+          const newOrder = {
+            _id: new Date().toISOString(), // Unique ID for each order
+            payload: payload,
+            sent: false, // Flag to indicate if the order has been sent
+          };
+          await window.dbComprarCarrito.put(newOrder);
+        } catch (error) {
+            console.error("Error al guardar la orden offline:", error);
+        }
+    };
+
+    // Function to send pending orders when online
+    const sendPendingOrders = async () => {
+        try {
+            const orders = await window.dbComprarCarrito.allDocs({ include_docs: true });
+            const pendingOrders = orders.rows.filter(row => !row.doc.sent);
+
+            for (const order of pendingOrders) {
+      try {
+        const result = await createMovement(order.doc.payload);
+        if (result) {
+          try { // try...catch añadido
+            await window.dbComprarCarrito.remove(order.doc._id, order.doc._rev);
+            console.log('Orden enviada correctamente:', order.doc._id);
+          } catch (removeError) {
+            console.error('Error al eliminar la orden de la base de datos offline:', removeError, 'ID:', order.doc._id);
+          }
+        }
+      } catch (error) {
+        console.error('Error al enviar orden:', error, 'ID:', order.doc._id);
       }
     }
-  } catch (error) {
-    console.error('Error al enviar orden:', error, 'ID:', order.doc._id);
-  }
-}
-    } catch (error) {
-        console.error('Error al procesar las órdenes pendientes:', error);
-    }
-};
+        } catch (error) {
+            console.error('Error al procesar las órdenes pendientes:', error);
+        }
+    };
 
-//Check internet connection
-const checkOnlineStatus = async () => {
-    if (navigator.onLine) {
-        await sendPendingOrders();
+    //Check internet connection
+    const checkOnlineStatus = async () => {
+        if (navigator.onLine) {
+            await sendPendingOrders();
+        }
     }
-}
 
 
     // Cargar el carrito cuando el componente se monte

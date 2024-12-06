@@ -1,19 +1,37 @@
-    serviceWorker.js
+//serviceWorker.js
    const CACHE_NAME = 'my-pwa-cache-v1';
-   const urlsToCache = [
+   /*const urlsToCache = [
      '/',
      '/index.html',
      '/src/App.vue',
      '/src/components/cliente/components/Home.vue',
      '/src/components/personal/components/SidebarNavbar.vue',
      '/src/components/cliente/components/Compras.vue',
-   ];
+   ];*/
 
+   const urlsToCache = [
+    '/', // Página principal
+    '/index.html', // HTML principal
+    '/assets/images/LogoWaterhouse2.png', 
+    '/assets/images/LogoWaterhouse2.png',
+    '/css/main.css',
+    '/js/main.js'
+  ];
 
+   /*self.addEventListener('install', (event) => {
+     event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache)));
+   });*/
 
    self.addEventListener('install', (event) => {
-     event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache)));
-   });
+    event.waitUntil(
+      caches.open(CACHE_NAME).then((cache) => {
+        return cache.addAll(urlsToCache).catch((error) => {
+          console.error('Error al agregar recursos al caché:', error);
+        });
+      })
+    );
+  });
+  
 
 
    self.addEventListener('activate', (event) => {

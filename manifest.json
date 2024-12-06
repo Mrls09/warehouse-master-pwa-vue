@@ -1,0 +1,22 @@
+{
+    "name": "Warehouse Master",
+    "short_name": "Warehouse",
+    "description": "App Web Progresiva hecha en Vue",
+    "start_url": "./index.html",
+    "display": "standalone",
+    "background_color": "#701332",
+    "theme_color": "#FBE8EE",
+    "icons": [
+      {
+        "src": "src/assets/images/LogoWaterhouse2.png",
+        "sizes": "192x192",
+        "type": "image/png"
+      },
+      {
+        "src": "src/assets/images/LogoWaterhouse2.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      }
+    ]
+  }
+  
