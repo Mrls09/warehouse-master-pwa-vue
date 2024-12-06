@@ -14,7 +14,7 @@
             <text stroke="black" stroke-width="0.45" id="text" font-family="monospace" font-size="12.7"
                   font-weight="bolder" fill="#e2e2e2">
               <textPath id="textPath" href="#circlePath">
-                🍱 Foodster 🍚 Foodster 🥗 Foodster
+                🍱 warehouse 🍚 warehouse 🥗 warehouse
               </textPath>
             </text>
           </svg>
@@ -26,7 +26,7 @@
 
       <div class="max-w-md w-full p-6">
         <h1 class="text-3xl font-bold mb-6 text-black text-center lg:hidden">
-          Foodster
+          warehouse
         </h1>
         <h2 class="text-3xl font-semibold mb-6 text-black text-center sm:text-2xl lg:text-3xl">
           Recuperar Contraseña
