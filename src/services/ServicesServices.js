@@ -6,7 +6,6 @@ const getProducts = async () => {
     try {
         const response = await fetchClient.get("/products/");
         if (response && response.data) {
-            console.log(response.data)
             return response.data;  // Asumimos que los productos vienen en `data`
         } else {
             showNotification("error", "No se encontraron productos.");

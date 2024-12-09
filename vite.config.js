@@ -1,26 +1,18 @@
-import { fileURLToPath, URL } from 'node:url'
-import { defineConfig } from 'vite'
-//import legacy from '@vitejs/plugin-legacy'
-import vue2 from '@vitejs/plugin-vue2'
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue2';
+import { resolve } from 'path';
 
-// https://vitejs.dev/config/
+
 export default defineConfig({
-  plugins: [
-    vue2(),
-    /*legacy({
-      targets: ['defaults', '> 1%', 'not IE 11'], // Soporta más navegadores modernos y elimina IE11
-      additionalLegacyPolyfills: ['regenerator-runtime/runtime']
-    })*/
-  ],
+  plugins: [vue()],
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
+      '@': resolve(__dirname, 'src')
     }
   },
+  // Agrega otras configuraciones de Vite si las necesitas (CSS preprocesadores, etc.)
   build: {
-    target: 'esnext',  // Usa un estándar que todavía sea bastante moderno pero más compatible
-    chunkSizeWarningLimit: 8000,  // Ajusta el límite de tamaño de los chunks
-  }
+    outDir: 'dist' //Especifica donde se generaran los archivos estáticos
+  },
+
 });
-
-
