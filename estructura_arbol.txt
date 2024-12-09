@@ -1,0 +1,136 @@
+Listado de rutas de carpetas
+El n£mero de serie del volumen es 0000002B 3A73:8222
+C:\INTEGRACARSI\WAREHOUSE-MASTER-PWA-VUE
+³   .gitignore
+³   estructura_arbol.txt
+³   index.html
+³   manifest.json
+³   package-lock.json
+³   package.json
+³   postcss.config.js
+³   README.md
+³   serviceWorker.js
+³   tailwind.config.js
+³   vite.config.js
+³   webpack.config.js
+³   
+ÃÄÄÄ.vscode
+ÃÄÄÄdist
+³   ³   favicon.ico
+³   ³   index.html
+³   ³   
+³   ÀÄÄÄassets
+³           Compras.5bf85aff.js
+³           Compras.cf6e3620.css
+³           ErrorPage.835fd147.css
+³           ErrorPage.858cc897.js
+³           Home.6f7524f6.js
+³           Home.9ca73d19.css
+³           index.7c27b610.css
+³           index.9df81cd1.js
+³           landingimg1.f4c397a6.jpg
+³           landingimg2.68c05347.jpg
+³           landingimg3.28290094.jpg
+³           landingimg4.13a324dd.jpg
+³           landingimg5.8e2ebcd5.jpg
+³           LandingPage.3cee3a49.css
+³           LandingPage.89b1d9ee.js
+³           Login.5ef1a0f6.css
+³           Login.67503458.js
+³           LogoWaterhouse.4dacd4cb.png
+³           LogoWaterhouse2.094f8168.png
+³           LogoWaterhouse2.cd9740c0.js
+³           Profile.297ba1b8.css
+³           Profile.71e403a8.js
+³           Profile.7a4bdfcc.css
+³           Profile.f88d2b3c.js
+³           Register.9fd09392.css
+³           Register.d73550bb.js
+³           ServicesServices.7199400a.js
+³           Servicios.9146e07e.js
+³           Servicios.f7fd52c9.css
+³           ShoppingCart.2f8d4881.js
+³           ShoppingCart.61ce82d9.css
+³           UsersServices.e6f50414.js
+³           
+ÃÄÄÄpublic
+³       favicon.ico
+³       
+ÀÄÄÄsrc
+    ³   App.vue
+    ³   main.js
+    ³   
+    ÃÄÄÄassets
+    ³   ³   base.css
+    ³   ³   logo.svg
+    ³   ³   main.css
+    ³   ³   
+    ³   ÀÄÄÄimages
+    ³       ³   logo3d.png
+    ³       ³   logoapp.png
+    ³       ³   logorealista.jpg
+    ³       ³   logorealista.png
+    ³       ³   LogoWaterhouse.png
+    ³       ³   LogoWaterhouse2.png
+    ³       ³   
+    ³       ÀÄÄÄpaqueteria
+    ³               landingimg1.jpg
+    ³               landingimg2.jpg
+    ³               landingimg3.jpg
+    ³               landingimg4.jpg
+    ³               landingimg5.jpg
+    ³               
+    ÃÄÄÄcomponents
+    ³   ÃÄÄÄcliente
+    ³   ³   ÀÄÄÄcomponents
+    ³   ³           CardService.vue
+    ³   ³           Compras.vue
+    ³   ³           Home.vue
+    ³   ³           Profile.vue
+    ³   ³           Servicios.vue
+    ³   ³           ShoppingCart.vue
+    ³   ³           
+    ³   ÀÄÄÄpublic
+    ³       ³   DialogCambiarContra.vue
+    ³       ³   Login.vue
+    ³       ³   Profile.vue
+    ³       ³   Register.vue
+    ³       ³   Restablecer.vue
+    ³       ³   RestablecerConfirmar.vue
+    ³       ³   
+    ³       ÃÄÄÄerror
+    ³       ³       ErrorPage.vue
+    ³       ³       
+    ³       ÀÄÄÄLanding-pages
+    ³               LandingPage.vue
+    ³               
+    ÃÄÄÄplugins
+    ³       vuetify.js
+    ³       
+    ÃÄÄÄrouter
+    ³       index.js
+    ³       
+    ÃÄÄÄservices
+    ³       CartService.js
+    ³       CategoryServices.js
+    ³       RecuperarContraService.js
+    ³       ServicesServices.js
+    ³       SwalService.js
+    ³       UsersServices.js
+    ³       
+    ÃÄÄÄstores
+    ³       auth.store.js
+    ³       cart.store.js
+    ³       index.js
+    ³       
+    ÃÄÄÄutils
+    ³       aes.js
+    ³       axios-client.js
+    ³       constants.js
+    ³       fetch-client.js
+    ³       notification.js
+    ³       
+    ÀÄÄÄviews
+            AboutView.vue
+            HomeView.vue
+            
