@@ -20,7 +20,8 @@ export default defineConfig({
   build: {
     target: 'esnext',  // Usa un estándar que todavía sea bastante moderno pero más compatible
     chunkSizeWarningLimit: 8000,  // Ajusta el límite de tamaño de los chunks
-  }
+  },
+  base: '/warehouse-master-pwa-vue/',
 });
 
 
