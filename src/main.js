@@ -11,12 +11,13 @@ import VueNoty from 'vuejs-noty'
 import 'vuejs-noty/dist/vuejs-noty.css'
 import 'regenerator-runtime/runtime';
 import { registerSW } from 'virtual:pwa-register'
+import { showNotification } from './utils/notification';
 
 const pinia = createPinia();
 
 Vue.use(VueNoty, {
   timeout: 2000,
-  progressBar: true, 
+  progressBar: true,
   layout: 'topRight'
 })
 Vue.use(VueSweetalert2)
@@ -28,8 +29,13 @@ Vue.use(vuetify);
 registerSW({
   immediate: true,
   onOfflineReady() {
-    // Muestra una notificación o realiza alguna acción cuando la PWA esté lista para funcionar offline.
-    Vue.noty.success('La aplicación está lista para usarse sin conexión.'); // Ejemplo con VueNoty
+    if (navigator.serviceWorker) {
+      if (Notification.permission !== 'granted') {
+        Notification.requestPermission();
+      }
+    }
+    
+    showNotification('info', 'La aplicación está lista para usarse sin conexión.');
   },
   onRegistered(r) {
     r && setInterval(() => { r.update(); }, 1800000); //Opcional, para verificar actualizaciones cada 30min
@@ -39,13 +45,13 @@ registerSW({
 
 
 new Vue({
-  router, 
-  vuetify, 
-  pinia, 
+  router,
+  vuetify,
+  pinia,
   render: (h) => h(App)
 }).$mount('#app')
 
 
 
-// Elimina el código anterior para registrar el service worker manualmente, 
+// Elimina el código anterior para registrar el service worker manualmente,
 // ya que registerSW() lo hace automáticamente.
