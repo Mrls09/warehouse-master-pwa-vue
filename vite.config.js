@@ -19,19 +19,19 @@ export default defineConfig(({ mode }) => {
           "description": "Aplicación de gestión de inventarios y compras.",
           "icons": [
             {
-              "src": "/assets/images/LogoWaterhouse144.png",
+              "src": "http://129.146.111.32:3000/6757c12cc4e0bd40d75d718a",
               "sizes": "144x144",
               "type": "image/png",
               "purpose": "any"
             },
             {
-              "src": "/assets/images/LogoWaterhouse192.png",
+              "src": "http://129.146.111.32:3000/6757c134c4e0bd40d75d718c",
               "sizes": "192x192",
               "type": "image/png",
               "purpose": "any"
             },
             {
-              "src": "/assets/images/LogoWaterhouse512.png",
+              "src": "http://129.146.111.32:3000/6757c13cc4e0bd40d75d718e",
               "sizes": "512x512",
               "type": "image/png",
               "purpose": "any"
