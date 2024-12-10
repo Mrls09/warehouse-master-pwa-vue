@@ -39,7 +39,7 @@ export default defineConfig(({ mode }) => {
               "purpose": "any"
             }
           ],
-          "start_url": "/home/inicio",
+          "start_url": "/warehouse-master-pwa-vue/",
           "display": "standalone",
           "background_color": "#ffffff",
           "theme_color": "#000000",
