@@ -30,6 +30,7 @@ function request(method) {
 
 export function authHeader(url) {
     const { user } = useAuthStore();
+    console.log(user);
     const isLoggedIn = !!user?.token;
     if (isLoggedIn) {
         return { Authorization: `Bearer ${user.token}` };

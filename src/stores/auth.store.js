@@ -16,7 +16,8 @@ export const useAuthStore = defineStore("auth", {
           email: correo, // Cambié 'email' para que coincida con el parámetro
           password: contrasenia, // Cambié 'password' para que coincida con el parámetro
         });
-        this.user = response.data.user; // Guarda los datos del usuario
+        this.user = response.data.user; 
+        this.user.token = response.data.token; // Asumo que el token viene en la respuesta
         localStorage.setItem("user", JSON.stringify(this.user)); // Almacena en localStorage
         // Aquí también podrías guardar el token de autenticación si es necesario
       } catch (error) {
