@@ -77,11 +77,12 @@
 import { reactive, onMounted } from "vue";
 import { createMovement } from "@/services/ServicesServices";
 import { showNotification } from "@/utils/notification";
+import { useAuthStore } from "@/stores";
+
 
 export default {
   name: "ShoppingCart",
   setup() {
-    // Definir cart como un objeto reactivo con productos y total
     const cart = reactive({
       products: [],
       total: 0, // Aseguramos que total esté inicialmente a 0
@@ -160,6 +161,15 @@ export default {
 
     //Realizar la Compra de los Productos
     const comprarCart = async () => {
+      const {user} = useAuthStore();
+      const isLoggedIn = !!user?.token;
+      if (!isLoggedIn) {
+        showNotification(
+            "warning",
+            "Inicia sesión para proceder con tu compra."
+        );
+        return;
+      }
       if (cart.products.length === 0) {
         showNotification("warning", "El carrito está vacío.");
         return;

@@ -69,6 +69,7 @@
 <script>
 import CardService from "@/components/cliente/components/CardService.vue";
 import { getProducts } from "@/services/ServicesServices";
+import { showNotification } from "@/utils/notification";
 
 export default {
   components: {
@@ -105,22 +106,46 @@ export default {
     async fetchServices() {
       this.loading = true;
       try {
-        const response = await getProducts(); // Asegúrate de que getProducts devuelve el arreglo de servicios.
-
+        const response = await getProducts();
         if (Array.isArray(response)) {
-          this.services = response;
-          this.filteredServices = response; // Inicializa con todos los servicios
+          this.services = response.map((product) => ({
+            ...product,
+            _id: product._id
+              ? product._id.toString()
+              : Math.random().toString(36).substring(2), // Genera un _id si no existe
+          }));
+          this.cacheProducts(this.services); // Usa this.services que ya tiene _id
         } else {
           console.warn("Formato inesperado en los datos:", response);
-          this.services = [];
-          this.filteredServices = [];
+          await this.loadCachedProducts();
         }
       } catch (error) {
         console.error("Error al obtener servicios:", error);
-        this.services = [];
-        this.filteredServices = [];
+        await this.loadCachedProducts();
       } finally {
+        this.filterServices(); // Llamar filterServices dentro del finally
         this.loading = false;
+      }
+    },
+
+    async cacheProducts(products) {
+      // Recibe products como argumento
+      try {
+        await window.dbProductos.bulkDocs(products); // Ya no necesitas mapear aquí
+        console.log("Productos cacheados correctamente");
+      } catch (error) {
+        console.error("Error cacheando productos:", error);
+      }
+    },
+
+    async loadCachedProducts() {
+      try {
+        const result = await window.dbProductos.allDocs({ include_docs: true });
+        this.services = result.rows.map((row) => row.doc);
+        showNotification("warning", "Mostrando productos desde caché");
+      } catch (error) {
+        console.error("Error cargando productos desde caché:", error);
+        this.services = []; // Asigna un array vacío si hay error al cargar desde caché.
       }
     },
     filterServices() {

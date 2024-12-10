@@ -24,10 +24,12 @@
     const dbCarrito = new PouchDB('carrito');
     const dbComprarCarrito = new PouchDB('comprar_carrito');
     const dbNombreUpdate = new PouchDB('nombre_update');
+    const dbProductos = new PouchDB('productos');
     // Hacer la base de datos accesible globalmente
     window.dbCarrito = dbCarrito;
     window.dbComprarCarrito = dbComprarCarrito;
     window.dbNombreUpdate =dbNombreUpdate ;
+    window.dbProductos = dbProductos;
   </script>
 </body>
 
