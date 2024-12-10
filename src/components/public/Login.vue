@@ -90,7 +90,7 @@
               <p>
                 ¿Olvidaste tu Contraseña?
                 <a
-                  href="/restablecer/correo/"
+                  href="./restablecer/correo/"
                   class="text-black hover:underline"
                   >¡Recupérala Aquí!</a
                 >

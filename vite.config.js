@@ -2,10 +2,12 @@ import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue2';
 import { resolve } from 'path';
 import { VitePWA } from 'vite-plugin-pwa';
+
 export default defineConfig(({ mode }) => {
   const isDevelopment = mode === 'development';
 
   return {
+    base: '/warehouse-master-pwa-vue/',  // Set the base URL for GitHub Pages
     plugins: [
       vue(),
       VitePWA({

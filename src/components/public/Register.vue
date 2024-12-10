@@ -102,7 +102,7 @@
         <div class="mt-4 text-sm text-gray-600 text-center">
           <p>
             ¿Ya eres parte de warehouse?
-            <a href="/home/login/" class="text-black hover:underline"
+            <a href="./home/login/" class="text-black hover:underline"
               >¡Inicia Sesión Aquí!</a
             >
           </p>
