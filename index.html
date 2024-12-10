@@ -5,6 +5,8 @@
   <meta charset="UTF-8" />
   <link rel="icon" href="/src/assets/images/LogoWaterhouse.png" type="image/png" />
   <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
   <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Wharehouse Store</title>
@@ -21,9 +23,13 @@
     // Inicializar la base de datos 'carrito'
     const dbCarrito = new PouchDB('carrito');
     const dbComprarCarrito = new PouchDB('comprar_carrito');
+    const dbNombreUpdate = new PouchDB('nombre_update');
+    const dbProductos = new PouchDB('productos');
     // Hacer la base de datos accesible globalmente
     window.dbCarrito = dbCarrito;
     window.dbComprarCarrito = dbComprarCarrito;
+    window.dbNombreUpdate =dbNombreUpdate ;
+    window.dbProductos = dbProductos;
   </script>
 </body>
 

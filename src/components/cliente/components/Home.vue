@@ -1,8 +1,8 @@
 <template>
   <div>
     <header class="w-full">
-      <v-tabs fixed-tabs dark class="bg-gray-900 animate__animated animate__fadeInLeft">
-        <v-tab v-for="item in items" :key="item.title" :to="item.to">
+      <v-tabs fixed-tabs dark class="bg-deepRedAccent animate__animated animate__fadeInLeft">
+        <v-tab v-for="item in items" :key="item.title" :to="item.to" class="tab-item">
           <v-icon>{{ item.icon }}</v-icon>
           {{ item.title }}
         </v-tab>
@@ -53,9 +53,7 @@ export default {
 </script>
 
 <style scoped>
-.v-app-bar {
-  background-color: #6A040F;
-}
+
 
 .v-toolbar {
   color: white;
@@ -67,5 +65,15 @@ export default {
 
 .v-icon {
   color: white;
+}
+
+/* Cambiar el color de las pestañas cuando se pasa el ratón o se selecciona */
+.tab-item {
+  transition: background-color 0.3s ease;
+}
+
+.tab-item:hover,
+.v-tab--active {
+  background-color: #BB5E7D; /* Rosa cuando se pasa el ratón o está activo */
 }
 </style>

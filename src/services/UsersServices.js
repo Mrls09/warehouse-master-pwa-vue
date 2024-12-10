@@ -1,62 +1,59 @@
-import { axiosClient } from "@/utils/axios-client";
+import { fetchClient } from "@/utils/fetch-client";
 import { showNotification } from "@/utils/notification";
 
 let baseUrl = `/users`;
 
 const getUsers = async () => {
     try {
-        const response = await axiosClient.get(`${baseUrl}/`);
-        return response.data;
+        const data = await fetchClient.get(`${baseUrl}/`);
+        return data;
     } catch (error) {
-        showNotification("error", "Error al obtener usuarios")
+        showNotification("error", "Error al obtener usuarios");
     }
-}
+};
+
 const getAllPaginado = async (page, size) => {
     try {
-        // /paginado/{page}/{size}
-        const response = await axiosClient.get(`${baseUrl}/paginado/${page}/${size}`);
-        return response.data;
+        const data = await fetchClient.get(`${baseUrl}/paginado/${page}/${size}`);
+        return data;
     } catch (error) {
-        showNotification("error", "Error al obtener elementos del paginado")
+        showNotification("error", "Error al obtener elementos del paginado");
     }
 };
 
 const getUser = async (id) => {
     try {
-        const response = await axiosClient.get(`${baseUrl}/${id}`);
-        return response.data;
-    } catch (error) {
-        showNotification("error", "Error al obtener usuario")
-    }
-
-}
-
-const getMyUser = async (uid) => {
-    try {
-        const response = await axiosClient.get(`${baseUrl}/get-user-uid/${uid}`);
-        return response.data;
+        const data = await fetchClient.get(`${baseUrl}/${id}`);
+        return data;
     } catch (error) {
         showNotification("error", "Error al obtener usuario");
     }
-}
+};
 
+const getMyUser = async (uid) => {
+    try {
+        const data = await fetchClient.get(`${baseUrl}/get-user-uid/${uid}`);
+        return data;
+    } catch (error) {
+        showNotification("error", "Error al obtener usuario");
+    }
+};
 
 const insert = async (personal) => {
     try {
-        const response = await axiosClient.post(`${baseUrl}/`, personal);
-        response.data ? showNotification("success", "Usuario creado") : showNotification("error", "Error al crear usuario")
-        return response.data;
+        const data = await fetchClient.post(`${baseUrl}/`, personal);
+        data ? showNotification("success", "Usuario creado") : showNotification("error", "Error al crear usuario");
+        return data;
     } catch (error) {
-        showNotification("error", "Error al crear usuario")
+        showNotification("error", "Error al crear usuario");
     }
 };
 
 const insertPublic = async (personal) => {
     try {
-        const response = await axiosClient.post(`${baseUrl}/create`, personal);
-        console.log("se envia hacia: ", `${baseUrl}/public/`, personal);
-        response.data ? showNotification("success", "Se ha registrado correctamente") : showNotification("error", "Error al crear usuario");
-        return response.data;
+        const data = await fetchClient.post(`${baseUrl}/create`, personal);
+        data ? showNotification("success", "Se ha registrado correctamente") : showNotification("error", "Error al crear usuario");
+        return data;
     } catch (error) {
         showNotification("error", "Error al crear usuario");
     }
@@ -64,53 +61,52 @@ const insertPublic = async (personal) => {
 
 const deleteUser = async (id_usuarios) => {
     try {
-        const response = await axiosClient.delete(`${baseUrl}/${id_usuarios}`);
-        response.data ? showNotification("success", "Usuario eliminado") : showNotification("error", "Error al eliminar usuario")
+        const data = await fetchClient.delete(`${baseUrl}/${id_usuarios}`);
+        data ? showNotification("success", "Usuario eliminado") : showNotification("error", "Error al eliminar usuario");
     } catch (error) {
-        showNotification("error", "Error al eliminar usuario")
+        showNotification("error", "Error al eliminar usuario");
     }
 };
+
 const changeStatus = async (id_usuarios) => {
     try {
-        const response = await axiosClient.delete(`${baseUrl}/status/${id_usuarios}`);
-        response.data ? showNotification("success", "Estado del usuario cambiado") : showNotification("error", "Error al cambiar estado del usuario")
-        return response.data;
+        const data = await fetchClient.delete(`${baseUrl}/status/${id_usuarios}`);
+        data ? showNotification("success", "Estado del usuario cambiado") : showNotification("error", "Error al cambiar estado del usuario");
+        return data;
     } catch (error) {
-        showNotification("error", "Error al cambiar estado del usuario")
+        showNotification("error", "Error al cambiar estado del usuario");
     }
 };
+
 const update = async (users) => {
     try {
-        const response = await axiosClient.put(`${baseUrl}/`, users);
-        response.data ? showNotification("success", "Usuario actualizado") : showNotification("error", "Error al actualizar usuario")
-        return response.data;
+        const data = await fetchClient.put(`${baseUrl}/`, users);
+        data ? showNotification("success", "Usuario actualizado") : showNotification("error", "Error al actualizar usuario");
+        return data;
     } catch (error) {
-        showNotification("error", "Error al actualizar usuario")
-
+        showNotification("error", "Error al actualizar usuario");
     }
 };
+
 const cambiarContrasena = async (cambioDto) => {
     try {
-        const response = await axiosClient.put(`${baseUrl}/cambio-contrasena/`, cambioDto);
-        response.data ? showNotification("success", "Contraseña actualizada") : showNotification("error", "Error al actualizar contraseña")
-        return response.data;
+        const data = await fetchClient.put(`${baseUrl}/cambio-contrasena/`, cambioDto);
+        data ? showNotification("success", "Contraseña actualizada") : showNotification("error", "Error al actualizar contraseña");
+        return data;
     } catch (error) {
-        showNotification("error", "Error al actualizar contraseña")
-
+        showNotification("error", "Error al actualizar contraseña");
     }
 };
 
-
-const getMyMovements = async() => {
-    try{
-        const response = await axiosClient.get(`/movements/`);
-        return response.data;
-    } catch (error){
-        showNotification("error", "Error al obtener tus compras")
+const getMyMovements = async () => {
+    try {
+        const data = await fetchClient.get(`/movements/`);
+        return data;
+    } catch (error) {
+        showNotification("error", "Error al obtener tus compras");
     }
-}
-
+};
 
 export default {
-    getUsers, getUser, getMyUser, insert, insertPublic, deleteUser: deleteUser, changeStatus, update, getAllPaginado, cambiarContrasena,getMyMovements
-}
+    getUsers, getUser, getMyUser, insert, insertPublic, deleteUser, changeStatus, update, getAllPaginado, cambiarContrasena, getMyMovements
+};

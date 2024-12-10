@@ -28,7 +28,7 @@
         <!-- Botón para ver detalles -->
         <button 
           @click="openModal(movement)" 
-          class="mt-4 bg-indigo-600 text-white text-sm font-medium px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors duration-300 flex items-center justify-center">
+          class="custom-btn mt-4 bg-indigo-600 text-white text-sm font-medium px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors duration-300 flex items-center justify-center">
           Ver Detalles
         </button>
       </div>
@@ -90,7 +90,7 @@
             <span class="font-semibold text-gray-800">Total: ${{ calculateTotal().toFixed(2) }}</span>
             <button 
               @click="closeModal" 
-              class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-300">
+              class="custom-btn bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-300">
               Aceptar
             </button>
           </div>
@@ -155,5 +155,21 @@ export default {
 }
 .fade-enter, .fade-leave-to {
   opacity: 0;
+}
+
+.custom-btn {
+  border-radius: 30px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: bold;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.custom-btn:hover {
+  transform: scale(1.05);
+}
+
+.custom-btn:focus {
+  outline: none;
 }
 </style>

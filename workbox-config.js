@@ -2,6 +2,8 @@ import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue2';
 import { resolve } from 'path';
 import { VitePWA } from 'vite-plugin-pwa';
+
+
 export default defineConfig(({ mode }) => {
   const isDevelopment = mode === 'development';
 
@@ -16,22 +18,21 @@ export default defineConfig(({ mode }) => {
         manifest: {
           "name": "Warehouse",
           "short_name": "Integracarsi",
-          "description": "Aplicación de gestión de inventarios y compras.",
           "icons": [
             {
-              "src": "http://129.146.111.32:3000/6757c12cc4e0bd40d75d718a",
+              "src": "/src/assets/images/LogoWaterhouse144.png",
               "sizes": "144x144",
               "type": "image/png",
               "purpose": "any"
             },
             {
-              "src": "http://129.146.111.32:3000/6757c134c4e0bd40d75d718c",
+              "src": "/src/assets/images/LogoWaterhouse192.png",
               "sizes": "192x192",
               "type": "image/png",
               "purpose": "any"
             },
             {
-              "src": "http://129.146.111.32:3000/6757c13cc4e0bd40d75d718e",
+              "src": "/src/assets/images/LogoWaterhouse512.png",
               "sizes": "512x512",
               "type": "image/png",
               "purpose": "any"
@@ -40,10 +41,7 @@ export default defineConfig(({ mode }) => {
           "start_url": "/",
           "display": "standalone",
           "background_color": "#ffffff",
-          "theme_color": "#000000",
-          "orientation": "portrait",
-          "scope": "/",
-          "lang": "es-MX"
+          "theme_color": "#000000"
         },
         workbox: {
           globPatterns: ['**/*.{js,css,html,ico,png,svg,jpg,woff2}'],
@@ -51,7 +49,34 @@ export default defineConfig(({ mode }) => {
           globIgnores: [
             '**/node_modules/**/*',
             'sw.js',
-            'workbox-*.js'
+            'workbox-*.js',
+          ],
+          runtimeCaching: [
+            {
+              urlPattern: ({ url }) => url.pathname.startsWith('https://az3dtour.online:8443/warehouse-master-api'),
+              handler: 'CacheFirst',
+              options: {
+                cacheName: '_pouch_carrito',
+                expiration: {
+                  maxEntries: 50,
+                  maxAgeSeconds: 24 * 60 * 60 // 1 día
+                },
+                cacheableResponse: {
+                  statuses: [0, 200]
+                }
+              }
+            },
+            {
+              urlPattern: ({ request }) => request.destination === 'document' || request.destination === 'script' || request.destination === 'style' || request.destination === 'image' || request.destination === 'font',
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'static-resources',
+                expiration: {
+                  maxEntries: 50,
+                  maxAgeSeconds: 30 * 24 * 60 * 60 // 30 días
+                }
+              }
+            }
           ]
         }
       })

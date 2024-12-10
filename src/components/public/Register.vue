@@ -1,12 +1,13 @@
 <template>
   <div class="flex h-screen">
     <div
-      class="hidden lg:flex w-1/2 items-center justify-center bg-fdoscuro text-fdoscuro"
+      class="hidden lg:flex w-1/2 items-center justify-center"
+      style="background-color: #4b0019; color: #4b0019"
     >
       <div class="max-w-md text-center">
         <img
           class="fixed left-[7%] top-[15%] logo"
-          src="../../assets/images/LogoWaterhouse2.png"
+          src="/src/assets/images/LogoWaterhouse2.png"
           alt="Logo"
         />
         <section class="rotate left-[7%] top-[15%]">
@@ -92,13 +93,9 @@
             @click:append="show1 = !show1"
           ></v-text-field>
           <div>
-            <v-btn
-              :loading="loading"
-              type="submit"
-              color="secondary"
-              class="w-full bg-fdoscuro text-white p-2 rounded-md hover:bg-gray-800 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300"
-            >
-              Registrarse
+            <v-btn :loading="loading" type="submit" color="secondary"
+              class="custom-btn w-full bg-fdoscuro text-white p-2 rounded-md">
+              Iniciar Sesión
             </v-btn>
           </div>
         </v-form>
@@ -232,5 +229,21 @@ export default {
 
 ::-webkit-scrollbar-thumb {
   background: transparent; /* Para Chrome, Safari, y Opera */
+}
+.custom-btn {
+  border-radius: 30px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: bold;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.custom-btn:hover {
+  background-color: #333;
+  transform: scale(1.05);
+}
+
+.custom-btn:focus {
+  outline: none;
 }
 </style>

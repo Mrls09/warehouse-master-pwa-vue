@@ -4,9 +4,8 @@ import { showNotification } from "@/utils/notification";
 // Función para obtener productos
 const getProducts = async () => {
     try {
-        const response = await fetchClient.get("/products/");
+        const response = await fetchClient.get("/products/active/true");
         if (response && response.data) {
-            console.log(response.data)
             return response.data;  // Asumimos que los productos vienen en `data`
         } else {
             showNotification("error", "No se encontraron productos.");

@@ -29,19 +29,19 @@
             <div class="quantity-actions">
               <button
                 @click="incrementQuantity(item.product._id)"
-                class="quantity-btn"
+                class="quantity-btn custom-btn"
               >
                 +
               </button>
               <span class="quantity-display">{{ item.quantity }}</span>
               <button
                 @click="decrementQuantity(item.product._id)"
-                class="quantity-btn"
+                class="quantity-btn custom-btn"
               >
                 -
               </button>
             </div>
-            <button @click="removeProduct(item.product._id)" class="remove-btn">
+            <button @click="removeProduct(item.product._id)" class="remove-btn custom-btn">
               Eliminar
             </button>
           </div>
@@ -66,9 +66,9 @@
       ></textarea>
     </div>
     <div class="quantity-actions">
-      <button @click="clearCart" class="clear-cart-btn">Vaciar carrito</button>
+      <button @click="clearCart" class="clear-cart-btn custom-btn">Vaciar carrito</button>
       <br />
-      <button @click="comprarCart" class="comprar-cart-btn">Comprar</button>
+      <button @click="comprarCart" class="comprar-cart-btn custom-btn">Comprar</button>
     </div>
   </div>
 </template>
@@ -77,11 +77,12 @@
 import { reactive, onMounted } from "vue";
 import { createMovement } from "@/services/ServicesServices";
 import { showNotification } from "@/utils/notification";
+import { useAuthStore } from "@/stores";
+
 
 export default {
   name: "ShoppingCart",
   setup() {
-    // Definir cart como un objeto reactivo con productos y total
     const cart = reactive({
       products: [],
       total: 0, // Aseguramos que total esté inicialmente a 0
@@ -160,89 +161,128 @@ export default {
 
     //Realizar la Compra de los Productos
     const comprarCart = async () => {
-  if (cart.products.length === 0) {
-    showNotification("warning", "El carrito está vacío.");
-    return;
-  }
+      const {user} = useAuthStore();
+      const isLoggedIn = !!user?.token;
+      if (!isLoggedIn) {
+        showNotification(
+            "warning",
+            "Inicia sesión para proceder con tu compra."
+        );
+        return;
+      }
+      if (cart.products.length === 0) {
+        showNotification("warning", "El carrito está vacío.");
+        return;
+      }
 
-  const payload = {
-    products: cart.products.map((item) => ({
-      product: { uid: item.product._id },
-      quantity: item.quantity,
-    })),
-    status: "EXIT",
-    observations: observations.value,
-  };
-
-  try {
-        const result = await createMovement(payload);
-        if (result) { // Check if createMovement was successful
-            await clearCart();
-        } else { // If createMovement failed (likely network error)
-            await storeOfflineOrder(payload);
-            showNotification('warning', 'Sin conexión. La orden se guardará para envío posterior.');
-            clearCart();
-        }
-    } catch (error) {
-        console.error('Error en comprarCart:', error); // Log the error
-        showNotification('error', 'Error al procesar la compra. Intenta de nuevo.'); //More informative message
-    }
-};
-
-// Function to store offline orders in PouchDB
-const storeOfflineOrder = async (payload) => {
-    try {
-      const newOrder = {
-        _id: new Date().toISOString(), // Unique ID for each order
-        payload: payload,
-        sent: false, // Flag to indicate if the order has been sent
+      const payload = {
+        products: cart.products.map((item) => ({
+          product: { uid: item.product._id },
+          quantity: item.quantity,
+        })),
+        status: "EXIT",
+        observations: observations.value,
       };
-      await window.dbComprarCarrito.put(newOrder);
-    } catch (error) {
-        console.error("Error al guardar la orden offline:", error);
-    }
-};
 
-// Function to send pending orders when online
-const sendPendingOrders = async () => {
-    try {
-        const orders = await window.dbComprarCarrito.allDocs({ include_docs: true });
-        const pendingOrders = orders.rows.filter(row => !row.doc.sent);
+      try {
+        const result = await createMovement(payload);
+        if (result) {
+          // Check if createMovement was successful
+          await clearCart();
+        } else {
+          // If createMovement failed (likely network error)
+          await storeOfflineOrder(payload);
+          showNotification(
+            "warning",
+            "Sin conexión. La orden se guardará para envío posterior."
+          );
+          clearCart();
+        }
+      } catch (error) {
+        console.error("Error en comprarCart:", error); // Log the error
+        showNotification(
+          "error",
+          "Error al procesar la compra. Intenta de nuevo."
+        ); //More informative message
+      }
+    };
+
+    // Function to store offline orders in PouchDB
+    const storeOfflineOrder = async (payload) => {
+      try {
+        const newOrder = {
+          _id: new Date().toISOString(), // Unique ID for each order
+          payload: payload,
+          sent: false, // Flag to indicate if the order has been sent
+        };
+        await window.dbComprarCarrito.put(newOrder);
+      } catch (error) {
+        console.error("Error al guardar la orden offline:", error);
+      }
+    };
+
+    // Function to send pending orders when online
+    let isSendingOrders = false;
+
+    const sendPendingOrders = async () => {
+      if (isSendingOrders) return; // Salir si ya está enviando
+      isSendingOrders = true;
+
+      try {
+        const orders = await window.dbComprarCarrito.allDocs({
+          include_docs: true,
+        });
+        const pendingOrders = orders.rows.filter(
+          (row) => !row.doc.sent && !row.doc.sending
+        );
 
         for (const order of pendingOrders) {
-  try {
-    const result = await createMovement(order.doc.payload);
-    if (result) {
-      try { // try...catch añadido
-        await window.dbComprarCarrito.remove(order.doc._id, order.doc._rev);
-        console.log('Orden enviada correctamente:', order.doc._id);
-      } catch (removeError) {
-        console.error('Error al eliminar la orden de la base de datos offline:', removeError, 'ID:', order.doc._id);
+          try {
+            order.doc.sending = true;
+            await window.dbComprarCarrito.put(order.doc);
+
+            const result = await createMovement(order.doc.payload);
+            if (result) {
+              await window.dbComprarCarrito.remove(
+                order.doc._id,
+                order.doc._rev
+              );
+              console.log(
+                "Orden enviada y eliminada correctamente:",
+                order.doc._id
+              );
+            }
+          } catch (error) {
+            console.error(
+              "Error al procesar la orden:",
+              error,
+              "ID:",
+              order.doc._id
+            );
+          }
+        }
+      } catch (error) {
+        console.error("Error al procesar órdenes pendientes:", error);
+      } finally {
+        isSendingOrders = false;
       }
-    }
-  } catch (error) {
-    console.error('Error al enviar orden:', error, 'ID:', order.doc._id);
-  }
-}
-    } catch (error) {
-        console.error('Error al procesar las órdenes pendientes:', error);
-    }
-};
+    };
 
-//Check internet connection
-const checkOnlineStatus = async () => {
-    if (navigator.onLine) {
+    //Check internet connection
+    const checkOnlineStatus = async () => {
+      if (navigator.onLine) {
         await sendPendingOrders();
-    }
-}
-
+      }
+    };
 
     // Cargar el carrito cuando el componente se monte
     onMounted(() => {
       loadCart();
-      checkOnlineStatus(); 
+      window.removeEventListener("online", checkOnlineStatus); // Eliminar cualquier evento previo
+      window.addEventListener("online", checkOnlineStatus); // Agregar uno nuevo
     });
-    window.addEventListener('online', checkOnlineStatus);
+
+    window.addEventListener("online", checkOnlineStatus);
     return {
       cart,
       incrementQuantity,
@@ -405,5 +445,23 @@ const checkOnlineStatus = async () => {
   outline: none;
   border-color: #007bff;
   background-color: #fff;
+}
+
+/* Custom button styles */
+.custom-btn {
+  border-radius: 30px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: bold;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.custom-btn:hover {
+  background-color: #333;
+  transform: scale(1.05);
+}
+
+.custom-btn:focus {
+  outline: none;
 }
 </style>
