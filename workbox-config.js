@@ -42,6 +42,33 @@ export default defineConfig(({ mode }) => {
             '**/node_modules/**/*',
             'sw.js',
             'workbox-*.js'
+          ],
+          runtimeCaching: [
+            {
+              urlPattern: ({ url }) => url.pathname.startsWith('https://az3dtour.online:8443/warehouse-master-api'),
+              handler: 'CacheFirst',
+              options: {
+                cacheName: '_pouch_carrito',
+                expiration: {
+                  maxEntries: 50,
+                  maxAgeSeconds: 24 * 60 * 60 // 1 día
+                },
+                cacheableResponse: {
+                  statuses: [0, 200]
+                }
+              }
+            },
+            {
+              urlPattern: ({ request }) => request.destination === 'document' || request.destination === 'script' || request.destination === 'style' || request.destination === 'image' || request.destination === 'font',
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'static-resources',
+                expiration: {
+                  maxEntries: 50,
+                  maxAgeSeconds: 30 * 24 * 60 * 60 // 30 días
+                }
+              }
+            }
           ]
         }
       })
