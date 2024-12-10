@@ -39,7 +39,7 @@ export default defineConfig(({ mode }) => {
               "purpose": "any"
             }
           ],
-          "start_url": "/",
+          "start_url": "/home/inicio",
           "display": "standalone",
           "background_color": "#ffffff",
           "theme_color": "#000000",
