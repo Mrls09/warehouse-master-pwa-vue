@@ -7,7 +7,7 @@
       <div class="max-w-md text-center">
         <img
           class="fixed left-[7%] top-[15%] logo"
-          src="../../assets/images/LogoWaterhouse2.png"
+          src="/assets/images/LogoWaterhouse2.png"
           alt="Logo"
         />
         <section class="rotate left-[7%] top-[15%]">

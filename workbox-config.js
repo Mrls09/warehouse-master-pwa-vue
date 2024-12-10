@@ -49,7 +49,7 @@ export default defineConfig(({ mode }) => {
           globIgnores: [
             '**/node_modules/**/*',
             'sw.js',
-            'workbox-*.js'
+            'workbox-*.js',
           ],
           runtimeCaching: [
             {
