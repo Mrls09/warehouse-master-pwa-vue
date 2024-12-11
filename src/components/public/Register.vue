@@ -95,7 +95,7 @@
           <div>
             <v-btn :loading="loading" type="submit" color="secondary"
               class="custom-btn w-full bg-fdoscuro text-white p-2 rounded-md">
-              Iniciar Sesión
+              Registrarse
             </v-btn>
           </div>
         </v-form>
