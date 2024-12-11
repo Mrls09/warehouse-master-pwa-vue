@@ -7,7 +7,6 @@ export default defineConfig(({mode}) => {
     const isDevelopment = mode === 'development';
 
     return {
-        base: '/warehouse-master-pwa-vue/',  // Set the base URL for GitHub Pages
         plugins: [vue(), VitePWA({
             registerType: 'autoUpdate', devOptions: {
                 enabled: true
