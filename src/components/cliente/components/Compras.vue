@@ -2,6 +2,13 @@
   <div class="p-6 bg-gray-50 min-h-screen">
     <h1 class="text-3xl text-center font-extrabold text-gray-900 mb-8">Tus Compras</h1>
     
+    <v-progress-linear
+      color="blue darken-2"
+      height="5"
+      indeterminate
+      v-if="loading"
+    ></v-progress-linear>
+
     <div v-if="data.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <!-- Tarjeta por cada movimiento -->
       <div 
@@ -13,14 +20,14 @@
         <div>
           <div class="flex items-center justify-between">
             <h2 class="text-lg font-bold text-gray-800">Última Modificación</h2>
-            <p class="text-sm text-gray-500">{{ formatDate(movement.lastModified) }}</p>
+            <p class="text-sm text-gray-500">{{ movement.lastModified ? formatDate(movement.lastModified) : 'Pendiente de enviar al servidor' }}</p>
           </div>
           <div class="flex items-center justify-between mt-2">
             <span class="flex items-center text-sm text-gray-700">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
               </svg>
-              {{ movement.products.length }} Productos
+              {{ movement.products ? `${movement.products.length} productos` : 'Sin productos' }}
             </span>
           </div>
         </div>
@@ -102,12 +109,14 @@
 
 <script>
 import { getMovements } from "@/services/ServicesServices";
+import { showNotification } from "@/utils/notification";
 
 export default {
   data() {
     return {
       data: [],
       selectedMovement: null,
+      loading: false,
     };
   },
   async mounted() {
@@ -115,11 +124,46 @@ export default {
   },
   methods: {
     async loadMovements() {
+      this.loading = true;
       try {
         const movements = await getMovements();
-        this.data = (movements || []).sort((a, b) => new Date(b.lastModified) - new Date(a.lastModified));
+        if (Array.isArray(movements)) {
+          this.data = movements.sort((a, b) => new Date(b.lastModified) - new Date(a.lastModified));
+          this.cacheMovements(this.data);
+        } else {
+          console.warn("Formato inesperado en los datos:", movements);
+          await this.loadCachedMovements();
+        }
       } catch (error) {
         console.error("Error al cargar los movimientos:", error);
+        await this.loadCachedMovements();
+      } finally {
+        this.loading = false;
+      }
+    },
+    async cacheMovements(movements) {
+      try {
+        await window.dbMovimientos.bulkDocs(movements);
+        console.log("Movimientos cacheados correctamente");
+      } catch (error) {
+        console.error("Error cacheando movimientos:", error);
+      }
+    },
+    async loadCachedMovements() {
+      try {
+        const result = await window.dbMovimientos.allDocs({ include_docs: true });
+        this.data = result.rows.map((row) => row.doc);
+        this.data.sort((a, b) => {
+          if (!a.lastModified) return -1;
+          if (!b.lastModified) return 1;
+          return new Date(b.lastModified) - new Date(a.lastModified);
+        });
+        showNotification("warning", "Mostrando movimientos desde caché");
+      } catch (error) {
+        console.error("Error cargando movimientos desde caché:", error);
+        this.data = [];
+      } finally {
+        this.loading = false;
       }
     },
     openModal(movement) {

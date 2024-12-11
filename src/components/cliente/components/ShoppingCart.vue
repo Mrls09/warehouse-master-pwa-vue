@@ -74,7 +74,7 @@
 </template>
 
 <script>
-import { reactive, onMounted } from "vue";
+import { reactive, onMounted, ref } from "vue";
 import { createMovement } from "@/services/ServicesServices";
 import { showNotification } from "@/utils/notification";
 import { useAuthStore } from "@/stores";
@@ -86,6 +86,8 @@ export default {
       products: [],
       total: 0,
     });
+
+    const observations = ref("");
 
     const calculateTotal = () => {
       cart.total = cart.products.reduce(
@@ -190,6 +192,7 @@ export default {
         }
       } catch (error) {
         console.error("Error en comprarCart:", error);
+        await storeOfflineOrder(payload);
         showNotification(
           "error",
           "Error al procesar la compra. Intenta de nuevo."
@@ -205,6 +208,10 @@ export default {
           sent: false,
         };
         await window.dbComprarCarrito.put(newOrder);
+        await window.dbMovimientos.put({
+          ...payload,
+          _id: newOrder._id,
+        });
       } catch (error) {
         console.error("Error al guardar la orden offline:", error);
       }
@@ -273,6 +280,7 @@ export default {
 
     return {
       cart,
+      observations,
       incrementQuantity,
       decrementQuantity,
       removeProduct,

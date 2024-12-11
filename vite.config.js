@@ -7,6 +7,7 @@ export default defineConfig(({mode}) => {
     const isDevelopment = mode === 'development';
 
     return {
+        base: '/warehouse-master-pwa-vue/',
         plugins: [vue(), VitePWA({
             registerType: 'autoUpdate', devOptions: {
                 enabled: true
