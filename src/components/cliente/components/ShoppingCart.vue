@@ -79,16 +79,14 @@ import { createMovement } from "@/services/ServicesServices";
 import { showNotification } from "@/utils/notification";
 import { useAuthStore } from "@/stores";
 
-
 export default {
   name: "ShoppingCart",
   setup() {
     const cart = reactive({
       products: [],
-      total: 0, // Aseguramos que total esté inicialmente a 0
+      total: 0,
     });
 
-    // Función para calcular el total del carrito
     const calculateTotal = () => {
       cart.total = cart.products.reduce(
         (sum, item) => sum + item.product.price * item.quantity,
@@ -96,77 +94,71 @@ export default {
       );
     };
 
-    // Cargar los productos del carrito desde la base de datos
     const loadCart = async () => {
       try {
         const result = await window.dbCarrito.allDocs({ include_docs: true });
         cart.products = result.rows.map((row) => ({
           product: row.doc,
-          quantity: row.doc.quantity || 1, // Si no hay cantidad, se asigna 1 por defecto
+          quantity: row.doc.quantity || 1,
         }));
-        calculateTotal(); // Recalcular el total después de cargar los productos
+        calculateTotal();
       } catch (error) {
         console.error("Error al cargar el carrito:", error);
       }
     };
 
-    // Incrementar la cantidad de un producto
     const incrementQuantity = async (uid) => {
       const item = cart.products.find((item) => item.product._id === uid);
       if (item) {
         item.quantity += 1;
-        item.product.quantity = item.quantity; // Actualizar la cantidad en el producto
-        await window.dbCarrito.put(item.product); // Guardar el cambio en la base de datos
-        calculateTotal(); // Recalcular el total
+        item.product.quantity = item.quantity;
+        await window.dbCarrito.put(item.product);
+        calculateTotal();
       }
     };
 
-    // Decrementar la cantidad de un producto
     const decrementQuantity = async (uid) => {
       const item = cart.products.find((item) => item.product._id === uid);
       if (item && item.quantity > 1) {
         item.quantity -= 1;
-        item.product.quantity = item.quantity; // Actualizar la cantidad en el producto
-        await window.dbCarrito.put(item.product); // Guardar el cambio en la base de datos
-        calculateTotal(); // Recalcular el total
+        item.product.quantity = item.quantity;
+        await window.dbCarrito.put(item.product);
+        calculateTotal();
       } else if (item) {
-        await removeProduct(uid); // Eliminar producto si la cantidad es 1
+        await removeProduct(uid);
       }
     };
 
-    // Eliminar un producto del carrito
     const removeProduct = async (uid) => {
       const index = cart.products.findIndex((item) => item.product._id === uid);
       if (index !== -1) {
-        await window.dbCarrito.remove(cart.products[index].product); // Eliminar de la base de datos
-        cart.products.splice(index, 1); // Eliminar del arreglo
-        calculateTotal(); // Recalcular el total
+        await window.dbCarrito.remove(cart.products[index].product);
+        cart.products.splice(index, 1);
+        calculateTotal();
       }
     };
 
-    // Vaciar el carrito
     const clearCart = async () => {
       try {
         const allDocs = await window.dbCarrito.allDocs();
         const deleteOps = allDocs.rows.map((row) =>
           window.dbCarrito.remove(row.id, row.value.rev)
         );
-        await Promise.all(deleteOps); // Eliminar todos los productos de la base de datos
-        cart.products = []; // Vaciar el carrito
-        calculateTotal(); // Recalcular el total
+        await Promise.all(deleteOps);
+        cart.products = [];
+        calculateTotal();
       } catch (error) {
         console.error("Error al vaciar el carrito:", error);
       }
     };
 
-    //Realizar la Compra de los Productos
     const comprarCart = async () => {
-      const {user} = useAuthStore();
+      const { user } = useAuthStore();
       const isLoggedIn = !!user?.token;
       if (!isLoggedIn) {
         showNotification(
-            "warning",
-            "Inicia sesión para proceder con tu compra."
+          "warning",
+          "Inicia sesión para proceder con tu compra."
         );
         return;
       }
@@ -187,10 +179,8 @@ export default {
       try {
         const result = await createMovement(payload);
         if (result) {
-          // Check if createMovement was successful
           await clearCart();
         } else {
-          // If createMovement failed (likely network error)
           await storeOfflineOrder(payload);
           showNotification(
             "warning",
@@ -199,21 +189,20 @@ export default {
           clearCart();
         }
       } catch (error) {
-        console.error("Error en comprarCart:", error); // Log the error
+        console.error("Error en comprarCart:", error);
         showNotification(
           "error",
           "Error al procesar la compra. Intenta de nuevo."
-        ); //More informative message
+        );
       }
     };
 
-    // Function to store offline orders in PouchDB
     const storeOfflineOrder = async (payload) => {
       try {
         const newOrder = {
-          _id: new Date().toISOString(), // Unique ID for each order
+          _id: new Date().toISOString(),
           payload: payload,
-          sent: false, // Flag to indicate if the order has been sent
+          sent: false,
         };
         await window.dbComprarCarrito.put(newOrder);
       } catch (error) {
@@ -221,11 +210,10 @@ export default {
       }
     };
 
-    // Function to send pending orders when online
     let isSendingOrders = false;
 
     const sendPendingOrders = async () => {
-      if (isSendingOrders) return; // Salir si ya está enviando
+      if (isSendingOrders) return;
       isSendingOrders = true;
 
       try {
@@ -268,21 +256,21 @@ export default {
       }
     };
 
-    //Check internet connection
     const checkOnlineStatus = async () => {
       if (navigator.onLine) {
         await sendPendingOrders();
       }
     };
 
-    // Cargar el carrito cuando el componente se monte
     onMounted(() => {
       loadCart();
-      window.removeEventListener("online", checkOnlineStatus); // Eliminar cualquier evento previo
-      window.addEventListener("online", checkOnlineStatus); // Agregar uno nuevo
+      checkOnlineStatus(); // Verificar órdenes pendientes al montar el componente
+      window.removeEventListener("online", checkOnlineStatus);
+      window.addEventListener("online", checkOnlineStatus);
     });
 
     window.addEventListener("online", checkOnlineStatus);
+
     return {
       cart,
       incrementQuantity,
