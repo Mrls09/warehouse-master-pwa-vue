@@ -1,74 +1,136 @@
 <template>
-  <div class="shopping-cart">
-    <h1 class="text-2xl text-center font-bold text-gray-800 mb-6">
-      Carrito de Compras
-    </h1>
-    <div v-if="cart.products.length === 0" class="empty-cart">
-      <p>El carrito está vacío.</p>
+  <div class="shopping-cart max-w-2xl mx-auto p-6 bg-white shadow-lg rounded-xl ">
+    <div class="flex items-center justify-center mb-6">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-3 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+      </svg>
+      <h1 class="text-3xl font-bold text-gray-800">Carrito de Compras</h1>
     </div>
-    <div v-else class="cart-items">
-      <ul>
-        <li
-          v-for="(item, index) in cart.products"
-          :key="index"
-          class="cart-item"
-        >
-          <div class="item-info">
-            <div class="product-name">
-              <h3>{{ item.product.name }}</h3>
-              <p>Proveedor: {{ item.product.provider }}</p>
-            </div>
-            <p>Cantidad: {{ item.quantity }}</p>
-            <p>Precio: ${{ (item.product.price || 0).toFixed(2) }}</p>
-            <p>{{ item.product.description }}</p>
-          </div>
-          <div class="item-actions">
-            <div class="qr-code">
-              <img :src="item.product.qrCode" alt="QR Code" />
-            </div>
-            <div class="quantity-actions">
-              <button
-                @click="incrementQuantity(item.product._id)"
-                class="quantity-btn custom-btn"
-              >
-                +
-              </button>
-              <span class="quantity-display">{{ item.quantity }}</span>
-              <button
-                @click="decrementQuantity(item.product._id)"
-                class="quantity-btn custom-btn"
-              >
-                -
-              </button>
-            </div>
-            <button @click="removeProduct(item.product._id)" class="remove-btn custom-btn">
-              Eliminar
+
+    <!-- Empty Cart State -->
+    <div v-if="cart.products.length === 0" class="text-center py-10 bg-gray-100 rounded-lg">
+      <p class="text-gray-500 text-xl">El carrito está vacío</p>
+    </div>
+
+    <!-- Cart Items -->
+    <div v-else class="space-y-4">
+      <div 
+        v-for="(item, index) in cart.products" 
+        :key="index" 
+        class="flex items-center bg-gray-50 p-4 rounded-lg shadow-sm hover:shadow-md transition-all duration-300"
+      >
+        <!-- QR Code -->
+        <div class="w-24 h-24 mr-4 flex-shrink-0">
+          <img 
+            :src="item.product.qrCode" 
+            alt="Product QR" 
+            class="w-full h-full object-cover rounded-md"
+          />
+        </div>
+        
+        <!-- Product Information -->
+        <div class="flex-grow">
+          <h3 class="text-xl font-semibold text-gray-800">
+            {{ item.product.name }}
+          </h3>
+          <p class="text-gray-600">
+            Proveedor: {{ item.product.provider }}
+          </p>
+          <p class="text-gray-500 text-sm">
+            {{ item.product.description }}
+          </p>
+        </div>
+        
+        <!-- Actions -->
+        <div class="flex flex-col items-end space-y-2">
+          <!-- Quantity Controls -->
+          <div class="flex items-center space-x-2">
+            <button 
+              @click="decrementQuantity(item.product._id)"
+              class="bg-red-100 text-red-600 rounded-full p-1 hover:bg-red-200 transition"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+              </svg>
+            </button>
+            <span class="font-bold text-gray-700">
+              {{ item.quantity }}
+            </span>
+            <button 
+              @click="incrementQuantity(item.product._id)"
+              class="bg-green-100 text-green-600 rounded-full p-1 hover:bg-green-200 transition"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+              </svg>
             </button>
           </div>
-        </li>
-      </ul>
+          
+          <!-- Price and Remove -->
+          <div class="flex items-center space-x-2">
+            <p class="font-semibold text-blue-600">
+              ${{ (item.product.price * item.quantity).toFixed(2) }}
+            </p>
+            <button 
+              @click="removeProduct(item.product._id)"
+              class="text-red-500 hover:text-red-700 transition"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="cart-total">
-      <p>Total: ${{ cart.total.toFixed(2) }}</p>
-    </div>
-    <!-- Campo para observaciones -->
-    <div v-if="cart.products.length > 0" class="observations-section">
-      <!-- Added v-if here -->
-      <label for="observations" class="text-lg font-semibold text-gray-700"
-        >Observaciones:</label
-      >
-      <textarea
-        id="observations"
-        v-model="observations"
-        rows="4"
-        class="observations-textarea"
-        placeholder="Puedes escribir referencias, instrucciones o comentarios adicionales aquí."
-      ></textarea>
-    </div>
-    <div class="quantity-actions">
-      <button @click="clearCart" class="clear-cart-btn custom-btn">Vaciar carrito</button>
-      <br />
-      <button @click="comprarCart" class="comprar-cart-btn custom-btn">Comprar</button>
+
+    <!-- Total and Actions -->
+    <div class="mt-6 bg-gray-100 p-4 rounded-lg">
+      <div class="flex justify-between items-center mb-4">
+        <span class="text-xl font-bold text-gray-800">Total:</span>
+        <span class="text-2xl font-bold text-blue-600">
+          ${{ cart.total.toFixed(2) }}
+        </span>
+      </div>
+
+      <!-- Observations -->
+      <div v-if="cart.products.length > 0" class="mt-4">
+        <label 
+          for="observations" 
+          class="block text-gray-700 font-semibold mb-2"
+        >
+          Observaciones
+        </label>
+        <textarea
+          id="observations"
+          v-model="observations"
+          rows="4"
+          class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-200 transition"
+          placeholder="Puedes escribir referencias, instrucciones o comentarios adicionales aquí."
+        ></textarea>
+      </div>
+
+      <!-- Cart Actions -->
+      <div class="flex justify-between mt-6 space-x-4">
+        <button 
+          @click="clearCart"
+          class="flex-grow bg-red-100 text-red-600 py-2 rounded-lg hover:bg-red-200 transition flex items-center justify-center"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
+          Vaciar carrito
+        </button>
+        <button 
+          @click="comprarCart"
+          class="flex-grow bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition flex items-center justify-center"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          Comprar
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -114,6 +176,7 @@ export default {
       if (item) {
         item.quantity += 1;
         item.product.quantity = item.quantity;
+        console.log(item);
         await window.dbCarrito.put(item.product);
         calculateTotal();
       }
